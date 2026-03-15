@@ -15,7 +15,7 @@ export function ChatSidebar() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
   // Zustand store
   const {
     sessionId,
@@ -30,18 +30,18 @@ export function ChatSidebar() {
     clearMessages,
     logout
   } = useChatSessionStore();
-  
+
   // Temporarily disable CopilotKit to test store functionality
   // const useCopilotChat = () => ({
   //   visibleMessages: [],
   //   appendMessage: undefined,
   //   isLoading: false
   // });
-  
+
   let visibleMessages: any[] = [];
   let appendMessage: ((message: any) => Promise<void>) | undefined;
   let isLoading = false;
-  
+
   // try {
   //   const copilotChat = useCopilotChat();
   //   visibleMessages = copilotChat.visibleMessages || [];
@@ -130,14 +130,13 @@ export function ChatSidebar() {
   const displayMessages = storeMessages.length > 0 ? storeMessages : visibleMessages;
 
   return (
-    <div className={`fixed right-0 top-0 h-full bg-white border-l border-gray-200 shadow-lg transition-all duration-300 z-50 ${
-      isMinimized ? "w-12" : "w-96"
-    }`}>
+    <div className={`fixed right-0 top-0 h-full bg-white border-l border-gray-200 shadow-lg transition-all duration-300 z-50 ${isMinimized ? "w-12" : "w-96"
+      }`}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         {!isMinimized && (
           <>
-            <h3 className="font-semibold text-gray-900">AI Assistant</h3>
+            <h3 className="font-semibold text-gray-900">Multiplier Clinic Agent</h3>
             <button
               onClick={() => setIsMinimized(true)}
               className="p-1 hover:bg-gray-100 rounded"
@@ -185,7 +184,7 @@ export function ChatSidebar() {
                 )}
               </div>
             </div>
-            
+
             {/* Session Info */}
             <div className="text-xs text-gray-500 space-y-1">
               <div>Messages: {storeMessages.length}</div>
@@ -199,30 +198,28 @@ export function ChatSidebar() {
           <div className="flex-1 overflow-y-auto p-4 h-[calc(100vh-200px)]">
             {displayMessages.length === 0 && (
               <div className="text-center text-gray-500 py-8">
-                <p className="mb-2">👋 Hi! I'm your clinical trial assistant.</p>
+                <p className="mb-2">👋 Hi! I'm your Multiplier Clinic Agent.</p>
                 <p className="text-sm">How can I help you today?</p>
               </div>
             )}
-            
+
             {/* Render messages */}
             {displayMessages.map((message, index) => (
               <div
                 key={message.id || `msg-${index}`}
-                className={`mb-4 ${
-                  message.role === "user" ? "text-right" : "text-left"
-                }`}
+                className={`mb-4 ${message.role === "user" ? "text-right" : "text-left"
+                  }`}
               >
                 <div
-                  className={`inline-block max-w-[80%] p-3 rounded-lg ${
-                    message.role === "user"
+                  className={`inline-block max-w-[80%] p-3 rounded-lg ${message.role === "user"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-100 text-gray-900"
-                  }`}
+                    }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                   {(message.timestamp || message.createdAt) && (
                     <p className="text-xs opacity-70 mt-1">
-                      {(message.timestamp || message.createdAt) instanceof Date 
+                      {(message.timestamp || message.createdAt) instanceof Date
                         ? (message.timestamp || message.createdAt).toLocaleTimeString()
                         : new Date(message.timestamp || message.createdAt).toLocaleTimeString()
                       }
@@ -243,7 +240,7 @@ export function ChatSidebar() {
                 </div>
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
 

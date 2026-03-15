@@ -66,8 +66,8 @@ export function MainSidebar() {
           </select>
         </div>
         <div className="flex flex-col items-center space-y-2">
-          <p className="text-[10px] text-gray-500 text-center">
-            Powered by <span className="text-blue-400 font-semibold">CopilotKit</span>
+          <p className="text-[10px] text-gray-500 text-center uppercase tracking-tighter">
+            Powered by <span className="text-blue-400 font-semibold">Multiplier Clinic Agent</span>
           </p>
         </div>
       </div>

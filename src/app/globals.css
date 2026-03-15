@@ -24,3 +24,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Hide CopilotKit branding */
+footer a[href*="copilotkit"],
+div[class*="copilot-kit-powered-by"],
+.copilot-kit-powered-by,
+[aria-label*="CopilotKit"] span:last-child,
+.copilot-kit-chat-footer,
+.copilot-kit-branding,
+p:contains("Powered by CopilotKit") {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Fallback for components that might not support :contains (most browsers don't support it in CSS) */
+/* We target the likely class or structure */
+.copilotKit-chat p:last-child,
+[class*="copilot-kit"] p:last-child {
+  opacity: 0 !important;
+}

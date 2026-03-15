@@ -169,7 +169,7 @@ export default function Home() {
           />
         );
       default:
-        return <RoleSelection roles={roles} onSelectRole={() => {}} />;
+        return <RoleSelection roles={roles} onSelectRole={() => { }} />;
     }
   };
 
@@ -178,8 +178,8 @@ export default function Home() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-semibold text-gray-900">
-              Clinical Trial Forms - AI Powered
+            <h1 className="text-xl font-black text-gray-900 tracking-tighter uppercase">
+              Multiplier Clinic Agent
             </h1>
             {userRole && (
               <div className="flex items-center space-x-2">
@@ -202,8 +202,8 @@ export default function Home() {
       <CopilotPopup
         instructions="You are a helpful assistant for clinical trial forms. Help users navigate the workflow, extract trial data, and complete forms accurately."
         labels={{
-          title: "Clinical Trial Assistant",
-          initial: "Hi! I can help you complete your clinical trial forms. Just ask me anything!",
+          title: "Multiplier Clinic Agent",
+          initial: "Hi! I'm your Multiplier Clinic Agent. I can help you complete your clinical trial forms. Just ask me anything!",
         }}
         defaultOpen={true}
         clickOutsideToClose={false}

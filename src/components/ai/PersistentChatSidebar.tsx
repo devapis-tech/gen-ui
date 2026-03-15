@@ -13,6 +13,10 @@ export function PersistentChatSidebar() {
       <CopilotSidebar
         defaultOpen={true}
         clickOutsideToClose={false}
+        labels={{
+          title: "Multiplier Clinic Agent",
+          initial: "I'm your Multiplier Clinic Agent. How can I assist you with the clinical trial today?",
+        }}
         // Sync messages if needed, but CopilotSidebar usually handles internal state
         // unless we want to provide the initial messages from our store on mount
         // or keep them in sync.

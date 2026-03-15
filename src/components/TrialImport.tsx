@@ -321,7 +321,7 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
         {/* AI Helper Text */}
         <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg">
           <p className="text-sm">
-            💡 <strong>Import Options:</strong> Choose from NCT ID lookup, direct link extraction, or PDF document upload. The AI will automatically extract and structure the trial data.
+            💡 <strong>Import Options:</strong> Choose from NCT ID lookup, direct link extraction, or PDF document upload. Multiplier Clinic Agent will automatically extract and structure the trial data.
           </p>
         </div>
       </div>
