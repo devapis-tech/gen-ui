@@ -1,11 +1,35 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { MainSidebar } from "./MainSidebar";
-import { PersistentChatSidebar } from "@/components/ai/PersistentChatSidebar";
+import dynamic from "next/dynamic";
+
+// Lazy-load the heavy CopilotKit sidebar — do NOT block page navigation
+const PersistentChatSidebar = dynamic(
+  () => import("@/components/ai/PersistentChatSidebar").then((m) => ({ default: m.PersistentChatSidebar })),
+  { ssr: false }
+);
 
 interface AppLayoutProps {
   children: ReactNode;
+}
+
+function ChatSidebarSkeleton() {
+  return (
+    <div className="w-[320px] fixed right-0 top-0 h-full border-l border-gray-200 bg-white z-50 flex flex-col">
+      <div className="p-4 border-b border-gray-200">
+        <div className="h-5 bg-gray-200 rounded w-40 animate-pulse" />
+      </div>
+      <div className="flex-1 p-4 space-y-3">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-10 bg-gray-100 rounded-lg animate-pulse" style={{ opacity: 1 - i * 0.2 }} />
+        ))}
+      </div>
+      <div className="p-4 border-t border-gray-200">
+        <div className="h-9 bg-gray-100 rounded-lg animate-pulse" />
+      </div>
+    </div>
+  );
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
@@ -21,8 +45,10 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </main>
 
-      {/* Right Column: AI Assistant (Fixed 320px) */}
-      <PersistentChatSidebar />
+      {/* Right Column: AI Assistant (Fixed 320px) — lazy loaded so it never blocks navigation */}
+      <Suspense fallback={<ChatSidebarSkeleton />}>
+        <PersistentChatSidebar />
+      </Suspense>
     </div>
   );
 }
