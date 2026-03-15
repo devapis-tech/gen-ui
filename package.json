@@ -14,11 +14,15 @@
     "@copilotkit/react-ui": "^1.54.0",
     "@copilotkit/runtime": "^1.54.0",
     "@copilotkit/shared": "^1.54.0",
+    "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "ollama": "^0.6.3",
     "openai": "^6.29.0",
+    "pdfjs-dist": "^5.5.207",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "uuid": "^13.0.0",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ClinicalTrial } from "@/types/clinical-trial";
-import { extractClinicalTrialData } from "@/lib/ollama";
+import { extractClinicalTrialData, extractFromPDF } from "@/lib/ollama";
 
 interface TrialImportProps {
   onTrialDataFetched: (data: ClinicalTrial) => void;
@@ -14,6 +14,8 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
   const [trialLinkInput, setTrialLinkInput] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Copilot action to fetch trial data
   // useCopilotAction({
@@ -108,8 +110,16 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
     setError(null);
 
     try {
-      // Use AI to extract data from link
-      const extractedData = await extractClinicalTrialData(trialLink);
+      // First try to fetch the webpage content
+      const response = await fetch(trialLink);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch webpage: ${response.status}`);
+      }
+      
+      const htmlContent = await response.text();
+      
+      // Use AI to extract data from the HTML content
+      const extractedData = await extractClinicalTrialData(htmlContent);
       
       const trialData: ClinicalTrial = {
         nctId: extractedData.nctId || "UNKNOWN",
@@ -136,9 +146,72 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
 
       onTrialDataFetched(trialData);
     } catch (err) {
-      setError("Failed to extract data from link. Please try again.");
+      console.error("Link extraction error:", err);
+      setError("Failed to extract data from link. Please check the URL and try again.");
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      setError("Please upload a PDF file");
+      return;
+    }
+
+    setIsFetching(true);
+    setError(null);
+    setUploadProgress(0);
+
+    try {
+      setUploadProgress(25);
+      
+      // Extract text from PDF using API
+      const extractedText = await extractFromPDF(file);
+      
+      setUploadProgress(75);
+      
+      // Use AI to parse the extracted text
+      const extractedData = await extractClinicalTrialData(extractedText);
+      
+      setUploadProgress(100);
+      
+      const trialData: ClinicalTrial = {
+        nctId: extractedData.nctId || "PDF_IMPORTED",
+        protocolTitle: extractedData.protocolTitle || "Extracted from PDF",
+        sponsorName: extractedData.sponsorName || "Unknown Sponsor",
+        sponsorClass: "INDUSTRY",
+        phase: extractedData.phase || "PHASE1",
+        studyType: extractedData.studyType || "INTERVENTIONAL",
+        conditions: extractedData.conditions || "Various",
+        enrollmentCount: extractedData.enrollmentCount || "0",
+        startDate: extractedData.startDate || "2024-01",
+        completionDate: extractedData.completionDate || "2026-12",
+        overallStatus: extractedData.overallStatus || "UNKNOWN",
+        piName: extractedData.piName || "Unknown PI",
+        piAffiliation: extractedData.piAffiliation || "Unknown Institution",
+        indNumber: extractedData.indNumber || "",
+        studyDetails: {
+          briefSummary: extractedData.studyDetails?.briefSummary || "Extracted from PDF document",
+          detailedDescription: extractedData.studyDetails?.detailedDescription || "",
+          primaryOutcomes: extractedData.studyDetails?.primaryOutcomes || [],
+          secondaryOutcomes: extractedData.studyDetails?.secondaryOutcomes || [],
+        },
+      };
+
+      onTrialDataFetched(trialData);
+    } catch (err) {
+      console.error("PDF processing error:", err);
+      setError("Failed to process PDF. Please ensure it contains trial data and try again.");
+    } finally {
+      setIsFetching(false);
+      setUploadProgress(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -187,6 +260,34 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
           </div>
         </div>
 
+        {/* PDF Upload */}
+        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            Import from PDF Document
+          </h3>
+          <div className="space-y-4">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf"
+              onChange={handleFileUpload}
+              disabled={isFetching}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            {uploadProgress !== null && (
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div
+                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+            )}
+            <div className="text-sm text-gray-600">
+              <p>Upload a PDF containing clinical trial information (protocol, investigator brochure, etc.)</p>
+            </div>
+          </div>
+        </div>
+
         {/* Trial Link Input */}
         <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-900 mb-4">
@@ -197,7 +298,7 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
               type="url"
               value={trialLinkInput}
               onChange={(e) => setTrialLinkInput(e.target.value)}
-              placeholder="Enter trial registry link"
+              placeholder="Enter trial registry link (e.g., https://clinicaltrials.gov/study/NCT12345678)"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
@@ -220,7 +321,7 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
         {/* AI Helper Text */}
         <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg">
           <p className="text-sm">
-            💡 <strong>AI Assistant:</strong> You can also ask the AI assistant to help you find and import trial data. Just say "Find trial NCT12345678" in the chat!
+            💡 <strong>Import Options:</strong> Choose from NCT ID lookup, direct link extraction, or PDF document upload. The AI will automatically extract and structure the trial data.
           </p>
         </div>
       </div>

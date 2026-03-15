@@ -64,3 +64,45 @@ export interface AIAction {
   handler: (args: any) => Promise<any>;
   render?: string;
 }
+
+export interface Patient {
+  id: string;
+  subjectId: string;
+  initials: string;
+  dateOfBirth?: string;
+  age?: number;
+  enrollmentDate: string;
+  trialArm?: string;
+  cohort?: string;
+  site: string;
+  status: "SCREENING" | "ENROLLED" | "COMPLETED" | "WITHDRAWN";
+  currentVisit: string;
+  nextVisit: string;
+  vitals?: Vitals[];
+  visitHistory?: VisitHistory[];
+  adverseEvents?: AdverseEvent[];
+}
+
+export interface Vitals {
+  id: string;
+  date: string;
+  bloodPressure: string;
+  heartRate: number;
+  temperature: number;
+  weight: number;
+  height?: number;
+}
+
+export interface VisitHistory {
+  id: string;
+  visitNumber: string;
+  visitName: string;
+  date: string;
+  status: "SCHEDULED" | "COMPLETED" | "MISSED" | "CANCELLED";
+  procedures: string[];
+  notes?: string;
+}
+
+import { AdverseEvent } from './adverse-event';
+
+export type { AdverseEvent };

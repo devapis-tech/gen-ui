@@ -42,18 +42,43 @@ export async function generateAIResponse(
   }
 }
 
+export async function extractFromPDF(file: File): Promise<string> {
+  try {
+    const formData = new FormData();
+    formData.append('pdf', file);
+
+    const response = await fetch('/api/parse-pdf', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to parse PDF');
+    }
+
+    const data = await response.json();
+    return data.text;
+  } catch (error) {
+    console.error("PDF parsing error:", error);
+    throw new Error("Failed to extract text from PDF");
+  }
+}
+
 export async function extractClinicalTrialData(input: string): Promise<any> {
   const messages: OllamaMessage[] = [
     {
       role: "user",
-      content: `Extract clinical trial information from this input and format as JSON: ${input}. 
-      Include fields: nctId, protocolTitle, sponsorName, phase, studyType, conditions, enrollmentCount, startDate, completionDate, overallStatus, piName, piAffiliation. Return only valid JSON.`,
+      content: `Extract clinical trial information from this input and format as JSON: ${input.substring(0, 8000)}. 
+      Include fields: nctId, protocolTitle, sponsorName, phase, studyType, conditions, enrollmentCount, startDate, completionDate, overallStatus, piName, piAffiliation, indNumber. Also include studyDetails with briefSummary, detailedDescription, primaryOutcomes (array), secondaryOutcomes (array). Return only valid JSON.`,
     },
   ];
 
   try {
     const response = await generateAIResponse("gpt-oss:120b", messages);
-    return JSON.parse(response);
+    // Clean the response to ensure it's valid JSON
+    const cleanResponse = response.replace(/```json\n?|```/g, '').trim();
+    return JSON.parse(cleanResponse);
   } catch (error) {
     console.error("Failed to parse AI response as JSON:", error);
     throw new Error("Invalid AI response format");

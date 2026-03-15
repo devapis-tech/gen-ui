@@ -1,22 +1,21 @@
+export const runtime = "nodejs";
+
+import { CopilotRuntime } from "@copilotkit/runtime";
 import { NextRequest } from "next/server";
-import {
-  CopilotRuntime,
-  OpenAIAdapter,
-  copilotRuntimeNextJSAppRouterEndpoint,
-} from "@copilotkit/runtime";
 
-export const POST = async (req: NextRequest) => {
-  const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
-    runtime: new CopilotRuntime({
-      remoteAdapter: new OpenAIAdapter({
-        apiKey: process.env.OPENAI_API_KEY,
-      }),
-    }),
-    serviceAdapter: new OpenAIAdapter({
-      apiKey: process.env.OPENAI_API_KEY,
-    }),
-    endpoint: req.nextUrl.pathname,
-  });
+const copilotRuntime = new CopilotRuntime();
 
-  return handleRequest(req);
-};
+copilotRuntime.addAgent({
+  name: "default",
+  description: "Clinical Trial Assistant",
+  instructions:
+    "You are a helpful assistant that helps users complete clinical trial forms.",
+});
+
+export async function POST(req: NextRequest) {
+  return copilotRuntime.handleRequest(req);
+}
+
+export async function GET(req: NextRequest) {
+  return copilotRuntime.handleRequest(req);
+}

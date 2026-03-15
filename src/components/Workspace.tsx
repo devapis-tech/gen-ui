@@ -130,6 +130,33 @@ export function Workspace({ trialData, selectedForms, onContinue, onBack }: Work
         </div>
       </div>
 
+      {/* Navigation Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg text-white cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all"
+             onClick={onContinue}>
+          <h3 className="text-xl font-semibold mb-2">Trial Design</h3>
+          <p className="text-blue-100 mb-4">View comprehensive trial design overview, protocol details, and study endpoints</p>
+          <div className="flex items-center text-white">
+            <span>View Design</span>
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-lg text-white cursor-pointer hover:from-green-600 hover:to-green-700 transition-all"
+             onClick={onContinue}>
+          <h3 className="text-xl font-semibold mb-2">Patient Management</h3>
+          <p className="text-green-100 mb-4">Monitor patient visits, safety data, and live trial status</p>
+          <div className="flex items-center text-white">
+            <span>Manage Patients</span>
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white rounded-lg shadow-md border border-gray-200">
         <div className="p-6">
           <h3 className="text-xl font-semibold text-gray-900 mb-6">
@@ -159,17 +186,25 @@ export function Workspace({ trialData, selectedForms, onContinue, onBack }: Work
         <div className="text-sm text-gray-500">
           All fields are editable. Ask the AI assistant for help with any field.
         </div>
-        <button
-          onClick={onContinue}
-          className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Continue to Review
-        </button>
+        <div className="space-x-4">
+          <button
+            onClick={() => window.location.reload()}
+            className="border border-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Save Draft
+          </button>
+          <button
+            onClick={onContinue}
+            className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Continue to Trial Design
+          </button>
+        </div>
       </div>
 
       <div className="mt-6 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg">
         <p className="text-sm">
-          💡 <strong>AI Assistant:</strong> I can help you fill in missing information, validate data, or suggest improvements. Just ask!
+          💡 <strong>Next Steps:</strong> Review your trial information, then proceed to Trial Design for detailed protocol overview or Patient Management for visit tracking and safety monitoring.
         </p>
       </div>
     </div>

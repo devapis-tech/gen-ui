@@ -11,6 +11,10 @@ import { TrialImport } from "@/components/TrialImport";
 import { FormSelection } from "@/components/FormSelection";
 import { Workspace } from "@/components/Workspace";
 import { ReviewExport } from "@/components/ReviewExport";
+import { TrialDesign } from "@/components/TrialDesign";
+import { PatientManagement } from "@/components/PatientManagement";
+import { useUserRole } from "@/contexts/UserRoleContext";
+// import { ChatSidebar } from "@/components/ChatSidebar";
 
 const roles: UserRole[] = [
   {
@@ -33,63 +37,63 @@ const roles: UserRole[] = [
   },
 ];
 
-type Step = "role" | "status" | "import" | "forms" | "workspace" | "review";
+type Step = "role" | "status" | "import" | "forms" | "workspace" | "trial_design" | "patient_management" | "review";
 
 export default function Home() {
+  const { userRole, setUserRole } = useUserRole();
   const [currentStep, setCurrentStep] = useState<Step>("role");
-  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [trialData, setTrialData] = useState<ClinicalTrial | null>(null);
   const [selectedForms, setSelectedForms] = useState<string[]>([]);
 
   // Make app state available to Copilot
-  // useCopilotReadable({
-  //   description: "Current clinical trial workflow state",
-  //   value: {
-  //     currentStep,
-  //     selectedRole,
-  //     trialData,
-  //     selectedForms,
-  //   },
-  // });
+  useCopilotReadable({
+    description: "Current clinical trial workflow state",
+    value: {
+      currentStep,
+      userRole,
+      trialData,
+      selectedForms,
+    },
+  });
 
   // Copilot action to navigate between steps
-  // useCopilotAction({
-  //   name: "navigateToStep",
-  //   description: "Navigate to a specific step in the clinical trial workflow",
-  //   parameters: [
-  //     {
-  //       name: "step",
-  //       type: "string",
-  //       description: "The step to navigate to (role, status, import, forms, workspace, review)",
-  //       required: true,
-  //     },
-  //   ],
-  //   handler: ({ step }) => {
-  //     if (["role", "status", "import", "forms", "workspace", "review"].includes(step)) {
-  //       setCurrentStep(step as Step);
-  //     }
-  //   },
-  //   render: "Navigating to workflow step...",
-  // });
+  useCopilotAction({
+    name: "navigateToStep",
+    description: "Navigate to a specific step in the clinical trial workflow",
+    parameters: [
+      {
+        name: "step",
+        type: "string",
+        description: "The step to navigate to (role, status, import, forms, workspace, trial_design, patient_management, review)",
+        required: true,
+      },
+    ],
+    handler: ({ step }) => {
+      if (["role", "status", "import", "forms", "workspace", "trial_design", "patient_management", "review"].includes(step)) {
+        setCurrentStep(step as Step);
+      }
+    },
+    render: "Navigating to workflow step...",
+  });
 
   // Copilot action to update trial data
-  // useCopilotAction({
-  //   name: "updateTrialData",
-  //   description: "Update clinical trial data",
-  //   parameters: [
-  //     {
-  //       name: "trialData",
-  //       type: "object",
-  //       description: "The clinical trial data to update",
-  //       required: true,
-  //     },
-  //   ],
-  //   handler: ({ trialData: newTrialData }) => {
-  //     // Type assertion to handle CopilotKit's generic object type
-  //     setTrialData(newTrialData as ClinicalTrial);
-  //   },
-  //   render: "Updating trial data...",
-  // });
+  useCopilotAction({
+    name: "updateTrialData",
+    description: "Update clinical trial data",
+    parameters: [
+      {
+        name: "trialData",
+        type: "object",
+        description: "The clinical trial data to update",
+        required: true,
+      },
+    ],
+    handler: ({ trialData: newTrialData }) => {
+      // Type assertion to handle CopilotKit's generic object type
+      setTrialData(newTrialData as ClinicalTrial);
+    },
+    render: "Updating trial data...",
+  });
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -98,7 +102,7 @@ export default function Home() {
           <RoleSelection
             roles={roles}
             onSelectRole={(role) => {
-              setSelectedRole(role);
+              setUserRole(role);
               setCurrentStep("status");
             }}
           />
@@ -106,7 +110,7 @@ export default function Home() {
       case "status":
         return (
           <StatusSelection
-            selectedRole={selectedRole}
+            selectedRole={userRole}
             onContinue={() => setCurrentStep("import")}
             onBack={() => setCurrentStep("role")}
           />
@@ -136,8 +140,24 @@ export default function Home() {
           <Workspace
             trialData={trialData}
             selectedForms={selectedForms}
-            onContinue={() => setCurrentStep("review")}
+            onContinue={() => setCurrentStep("trial_design")}
             onBack={() => setCurrentStep("forms")}
+          />
+        );
+      case "trial_design":
+        return (
+          <TrialDesign
+            trialData={trialData}
+            onContinue={() => setCurrentStep("patient_management")}
+            onBack={() => setCurrentStep("workspace")}
+          />
+        );
+      case "patient_management":
+        return (
+          <PatientManagement
+            trialData={trialData}
+            onContinue={() => setCurrentStep("review")}
+            onBack={() => setCurrentStep("trial_design")}
           />
         );
       case "review":
@@ -145,7 +165,7 @@ export default function Home() {
           <ReviewExport
             trialData={trialData}
             selectedForms={selectedForms}
-            onBack={() => setCurrentStep("workspace")}
+            onBack={() => setCurrentStep("patient_management")}
           />
         );
       default:
@@ -161,11 +181,11 @@ export default function Home() {
             <h1 className="text-xl font-semibold text-gray-900">
               Clinical Trial Forms - AI Powered
             </h1>
-            {selectedRole && (
+            {userRole && (
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600">Role:</span>
                 <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
-                  {selectedRole.badge}
+                  {userRole.badge}
                 </span>
               </div>
             )}
@@ -177,7 +197,9 @@ export default function Home() {
         {renderCurrentStep()}
       </main>
 
-      {/* <CopilotPopup
+      {/* <ChatSidebar /> */}
+
+      <CopilotPopup
         instructions="You are a helpful assistant for clinical trial forms. Help users navigate the workflow, extract trial data, and complete forms accurately."
         labels={{
           title: "Clinical Trial Assistant",
@@ -185,7 +207,7 @@ export default function Home() {
         }}
         defaultOpen={true}
         clickOutsideToClose={false}
-      /> */}
+      />
     </div>
   );
 }

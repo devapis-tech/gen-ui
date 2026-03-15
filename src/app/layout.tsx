@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { CopilotKit } from "@copilotkit/react-core";
 import "./globals.css";
+import { UserRoleProvider } from "@/contexts/UserRoleContext";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { CopilotKit } from "@copilotkit/react-core";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,11 +26,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <UserRoleProvider>
+        <CopilotKit runtimeUrl="/api/copilotkit">
+            <AppLayout>
+              {children}
+            </AppLayout>
+          </CopilotKit>
+        </UserRoleProvider>
       </body>
     </html>
   );
