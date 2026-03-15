@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Clinical Trial Forms - AI Powered
+
+A modern clinical trial form management system powered by CopilotKit and Ollama AI, built with Next.js and TypeScript.
+
+## Features
+
+- **AI-Powered Form Assistance**: Intelligent form completion and validation using CopilotKit
+- **Multi-Step Workflow**: Guided process from role selection to data export
+- **Clinical Trial Data Extraction**: Automatic data extraction from NCT IDs and trial links
+- **Dynamic Form Generation**: Adaptive forms based on trial type and user role
+- **Export Capabilities**: Multiple export formats (JSON, PDF, CSV)
+- **Real-time AI Chat**: Built-in AI assistant for workflow guidance
+
+## Technology Stack
+
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **AI Integration**: CopilotKit (React components), Ollama Cloud (LLM)
+- **Styling**: Tailwind CSS
+- **State Management**: React hooks with CopilotKit integration
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- Ollama Cloud API key (get one at [https://ollama.com/settings/keys](https://ollama.com/settings/keys))
+
+### Installation
+
+1. Navigate to the project:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd /home/dev/clinical_trial_form2/new-gen-ui
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+# Create .env.local file (this file is git-ignored for security)
+# Add your Ollama API key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Start the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-To learn more about Next.js, take a look at the following resources:
+### Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env.local` file in the project root:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+# Ollama Cloud API Key (required)
+OLLAMA_API_KEY=your_ollama_api_key_here
 
-## Deploy on Vercel
+# CopilotKit Cloud API Key (optional - for cloud hosting)
+# NEXT_PUBLIC_COPILOT_CLOUD_API_KEY=your_copilot_cloud_api_key_here
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Backend API URL (for existing clinical trial API)
+VITE_API_URL=http://localhost:5000/api
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Workflow Overview
+
+1. **Role Selection**: Choose your role (Internal Team, Organization, Client)
+2. **Status Selection**: Indicate if this is a new or ongoing trial
+3. **Trial Import**: Import data via NCT ID or trial link (AI-powered extraction)
+4. **Form Selection**: Choose required forms for your trial type
+5. **Workspace**: Review and edit extracted trial data with AI assistance
+6. **Review & Export**: Validate data and export in preferred format
+
+## AI Features
+
+### CopilotKit Integration
+- **useCopilotReadable**: Makes app state available to AI
+- **useCopilotAction**: Enables AI to perform actions like navigation and data updates
+- **CopilotPopup**: Built-in AI chat interface
+
+### Ollama Cloud Integration
+- **Data Extraction**: AI-powered parsing of clinical trial information
+- **Form Validation**: Intelligent compliance checking
+- **Content Generation**: AI-generated summaries and documentation
+
+## Component Structure
+
+```
+src/
+├── app/
+│   ├── api/copilotkit/     # CopilotKit runtime endpoint
+│   ├── layout.tsx          # Root layout with CopilotKit provider
+│   └── page.tsx            # Main application with workflow
+├── components/
+│   ├── RoleSelection.tsx   # Role selection interface
+│   ├── StatusSelection.tsx # Trial status selection
+│   ├── TrialImport.tsx     # Data import with AI extraction
+│   ├── FormSelection.tsx   # Form selection interface
+│   ├── Workspace.tsx       # Data editing workspace
+│   └── ReviewExport.tsx    # Review and export functionality
+├── lib/
+│   └── ollama.ts           # Ollama cloud client
+└── types/
+    └── clinical-trial.ts   # TypeScript type definitions
+```
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+## Migration from Old UI
+
+This new implementation provides:
+- Modern Next.js architecture vs. Vite + React
+- AI-powered assistance vs. manual form filling
+- TypeScript for better type safety
+- Component-based architecture for maintainability
+- Real-time AI chat integration
+- Enhanced user experience with Tailwind CSS
+
+## Security Notes
+
+- Environment variables are git-ignored for security
+- API keys should never be committed to version control
+- Ollama Cloud provides secure API access with token-based authentication
+- CopilotKit runtime endpoints should be protected in production
+
+## Contributing
+
+1. Follow the existing component structure
+2. Use TypeScript for all new components
+3. Maintain consistent styling with Tailwind CSS
+4. Add appropriate CopilotKit actions for new features
+5. Test AI interactions thoroughly
+
+## License
+
+This project is part of the clinical trial form management system migration.

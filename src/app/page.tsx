@@ -1,65 +1,191 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import { CopilotPopup } from "@copilotkit/react-ui";
+import "@copilotkit/react-ui/styles.css";
+import { ClinicalTrial, UserRole } from "@/types/clinical-trial";
+import { RoleSelection } from "@/components/RoleSelection";
+import { StatusSelection } from "@/components/StatusSelection";
+import { TrialImport } from "@/components/TrialImport";
+import { FormSelection } from "@/components/FormSelection";
+import { Workspace } from "@/components/Workspace";
+import { ReviewExport } from "@/components/ReviewExport";
+
+const roles: UserRole[] = [
+  {
+    id: "internal",
+    title: "Internal Team",
+    badge: "RESEARCH",
+    description: "Manage, track, and coordinate clinical trial protocols and regulatory submissions.",
+  },
+  {
+    id: "organization",
+    title: "Organization",
+    badge: "SPONSOR",
+    description: "Institutional sponsors managing multi-site trials and regulatory compliance at scale.",
+  },
+  {
+    id: "client",
+    title: "Client",
+    badge: "STAKEHOLDER",
+    description: "External stakeholders reviewing trial summaries, data, and regulatory status.",
+  },
+];
+
+type Step = "role" | "status" | "import" | "forms" | "workspace" | "review";
 
 export default function Home() {
+  const [currentStep, setCurrentStep] = useState<Step>("role");
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const [trialData, setTrialData] = useState<ClinicalTrial | null>(null);
+  const [selectedForms, setSelectedForms] = useState<string[]>([]);
+
+  // Make app state available to Copilot
+  // useCopilotReadable({
+  //   description: "Current clinical trial workflow state",
+  //   value: {
+  //     currentStep,
+  //     selectedRole,
+  //     trialData,
+  //     selectedForms,
+  //   },
+  // });
+
+  // Copilot action to navigate between steps
+  // useCopilotAction({
+  //   name: "navigateToStep",
+  //   description: "Navigate to a specific step in the clinical trial workflow",
+  //   parameters: [
+  //     {
+  //       name: "step",
+  //       type: "string",
+  //       description: "The step to navigate to (role, status, import, forms, workspace, review)",
+  //       required: true,
+  //     },
+  //   ],
+  //   handler: ({ step }) => {
+  //     if (["role", "status", "import", "forms", "workspace", "review"].includes(step)) {
+  //       setCurrentStep(step as Step);
+  //     }
+  //   },
+  //   render: "Navigating to workflow step...",
+  // });
+
+  // Copilot action to update trial data
+  // useCopilotAction({
+  //   name: "updateTrialData",
+  //   description: "Update clinical trial data",
+  //   parameters: [
+  //     {
+  //       name: "trialData",
+  //       type: "object",
+  //       description: "The clinical trial data to update",
+  //       required: true,
+  //     },
+  //   ],
+  //   handler: ({ trialData: newTrialData }) => {
+  //     // Type assertion to handle CopilotKit's generic object type
+  //     setTrialData(newTrialData as ClinicalTrial);
+  //   },
+  //   render: "Updating trial data...",
+  // });
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case "role":
+        return (
+          <RoleSelection
+            roles={roles}
+            onSelectRole={(role) => {
+              setSelectedRole(role);
+              setCurrentStep("status");
+            }}
+          />
+        );
+      case "status":
+        return (
+          <StatusSelection
+            selectedRole={selectedRole}
+            onContinue={() => setCurrentStep("import")}
+            onBack={() => setCurrentStep("role")}
+          />
+        );
+      case "import":
+        return (
+          <TrialImport
+            onTrialDataFetched={(data) => {
+              setTrialData(data);
+              setCurrentStep("forms");
+            }}
+            onBack={() => setCurrentStep("status")}
+          />
+        );
+      case "forms":
+        return (
+          <FormSelection
+            onContinue={(forms: string[]) => {
+              setSelectedForms(forms);
+              setCurrentStep("workspace");
+            }}
+            onBack={() => setCurrentStep("import")}
+          />
+        );
+      case "workspace":
+        return (
+          <Workspace
+            trialData={trialData}
+            selectedForms={selectedForms}
+            onContinue={() => setCurrentStep("review")}
+            onBack={() => setCurrentStep("forms")}
+          />
+        );
+      case "review":
+        return (
+          <ReviewExport
+            trialData={trialData}
+            selectedForms={selectedForms}
+            onBack={() => setCurrentStep("workspace")}
+          />
+        );
+      default:
+        return <RoleSelection roles={roles} onSelectRole={() => {}} />;
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-xl font-semibold text-gray-900">
+              Clinical Trial Forms - AI Powered
+            </h1>
+            {selectedRole && (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">Role:</span>
+                <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+                  {selectedRole.badge}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {renderCurrentStep()}
       </main>
+
+      {/* <CopilotPopup
+        instructions="You are a helpful assistant for clinical trial forms. Help users navigate the workflow, extract trial data, and complete forms accurately."
+        labels={{
+          title: "Clinical Trial Assistant",
+          initial: "Hi! I can help you complete your clinical trial forms. Just ask me anything!",
+        }}
+        defaultOpen={true}
+        clickOutsideToClose={false}
+      /> */}
     </div>
   );
 }
