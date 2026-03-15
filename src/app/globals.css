@@ -32,7 +32,8 @@ div[class*="copilot-kit-powered-by"],
 [aria-label*="CopilotKit"] span:last-child,
 .copilot-kit-chat-footer,
 .copilot-kit-branding,
-p:contains("Powered by CopilotKit") {
+div[class*="PoweredBy"],
+span[class*="PoweredBy"] {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
