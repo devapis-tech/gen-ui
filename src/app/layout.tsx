@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Clinical Trial Forms - AI Powered",
-  description: "AI-powered clinical trial form management with CopilotKit",
+  title: "Multiplier AI - Clinical Trial",
+  description: "Internal AI-powered clinical trial management environment",
 };
 
 export default function RootLayout({
@@ -30,13 +30,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserRoleProvider>
         <CopilotKit runtimeUrl="/api/copilotkit">
+          <UserRoleProvider>
             <AppLayout>
               {children}
             </AppLayout>
-          </CopilotKit>
-        </UserRoleProvider>
+          </UserRoleProvider>
+        </CopilotKit>
       </body>
     </html>
   );

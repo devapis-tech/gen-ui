@@ -9,33 +9,28 @@ export function EligibilityCriteria() {
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleSection = (section: string) => {
-    setExpandedSections(prev => 
-      prev.includes(section) 
+    setExpandedSections(prev =>
+      prev.includes(section)
         ? prev.filter(s => s !== section)
         : [...prev, section]
     );
   };
 
   const mockInclusionCriteria = [
-    "Adults aged 18-75 years",
-    "Diagnosis of moderate to severe condition confirmed by clinical assessment",
-    "Stable concomitant medications for at least 4 weeks prior to screening",
-    "Ability to provide written informed consent",
-    "Willingness to comply with study procedures and follow-up visits",
-    "Body mass index (BMI) between 18.5 and 35 kg/m²",
-    "Normal renal function (eGFR ≥ 60 mL/min/1.73m²)",
-    "Normal hepatic function (ALT/AST ≤ 2.5 × ULN)"
+    "Established diagnosis of UC for ≥3 months prior to randomization",
+    "Moderately to severely active UC (mMS 5-9, ES ≥2, RB ≥1)",
+    "Evidence of UC extending proximal to the rectum",
+    "Surveillance colonoscopy within 1 year if UC >8 years",
+    "Inadequate response to conventional or advanced therapy (excluding vedolizumab)",
+    "Must meet contraception requirements"
   ];
 
   const mockExclusionCriteria = [
-    "Previous participation in any investigational drug study within 30 days",
-    "History of severe allergic reactions to study medication components",
-    "Pregnant or breastfeeding women",
-    "Uncontrolled comorbidities (e.g., uncontrolled diabetes, hypertension)",
-    "Active infection requiring systemic therapy",
-    "History of malignancy within 5 years (except basal cell carcinoma)",
-    "Significant cardiovascular disease (MI, stroke, or unstable angina within 6 months)",
-    "Current use of prohibited medications that may interfere with study outcomes"
+    "Diagnosis of Crohn's disease, IBD unclassified, or PSC",
+    "Inherited immunodeficiency syndrome",
+    "Prior or planned bowel resection or major GI surgery",
+    "Evidence of toxic megacolon, abscess, or stricture",
+    "History of GI malignancy or any cancer within 5 years"
   ];
 
   const currentInclusionCriteria = trialData?.eligibilityCriteria?.inclusion || mockInclusionCriteria;
@@ -76,9 +71,8 @@ export function EligibilityCriteria() {
               </span>
             </div>
             <svg
-              className={`w-5 h-5 transform transition-transform ${
-                expandedSections.includes("inclusion") ? "rotate-180" : ""
-              }`}
+              className={`w-5 h-5 transform transition-transform ${expandedSections.includes("inclusion") ? "rotate-180" : ""
+                }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -111,7 +105,7 @@ export function EligibilityCriteria() {
                   </div>
                 ))}
               </div>
-              
+
               {isEditing && (
                 <button
                   onClick={() => {
@@ -146,9 +140,8 @@ export function EligibilityCriteria() {
               </span>
             </div>
             <svg
-              className={`w-5 h-5 transform transition-transform ${
-                expandedSections.includes("exclusion") ? "rotate-180" : ""
-              }`}
+              className={`w-5 h-5 transform transition-transform ${expandedSections.includes("exclusion") ? "rotate-180" : ""
+                }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -181,7 +174,7 @@ export function EligibilityCriteria() {
                   </div>
                 ))}
               </div>
-              
+
               {isEditing && (
                 <button
                   onClick={() => {
@@ -212,13 +205,13 @@ export function EligibilityCriteria() {
             <p className="font-medium text-blue-900">Total Criteria</p>
             <p className="text-sm text-blue-700">{currentInclusionCriteria.length + currentExclusionCriteria.length} items</p>
           </div>
-          
+
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
             <span className="text-2xl mb-2 block">✓</span>
             <p className="font-medium text-green-900">Inclusion</p>
             <p className="text-sm text-green-700">{currentInclusionCriteria.length} items</p>
           </div>
-          
+
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
             <span className="text-2xl mb-2 block">✗</span>
             <p className="font-medium text-red-900">Exclusion</p>

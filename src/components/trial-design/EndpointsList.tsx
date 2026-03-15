@@ -12,56 +12,48 @@ export function EndpointsList() {
     {
       id: "1",
       type: "primary" as const,
-      title: "Change from Baseline in Efficacy Score at Week 52",
-      description: "Mean change in the standardized efficacy assessment scale from baseline to week 52",
-      timepoint: "Week 52",
-      measurementMethod: "Standardized Efficacy Assessment Scale (SEAS)"
+      title: "Clinical Remission with mMS (Week 10)",
+      description: "Percentage of participants who achieve clinical remission using the Modified Mayo Score at Week 10",
+      timepoint: "Week 10",
+      measurementMethod: "Modified Mayo Score (mMS)"
     },
     {
-      id: "2", 
+      id: "2",
       type: "primary" as const,
-      title: "Proportion of Participants Achieving Clinical Response",
-      description: "Percentage of participants achieving predefined criteria for clinical response",
+      title: "Clinical Remission with mMS (Week 52)",
+      description: "Percentage of participants who achieve clinical remission at Week 52 among responders at Week 10",
       timepoint: "Week 52",
-      measurementMethod: "Clinical Response Criteria (CRC)"
+      measurementMethod: "Modified Mayo Score (mMS)"
     },
     {
       id: "3",
       type: "secondary" as const,
-      title: "Change from Baseline in Quality of Life Score",
-      description: "Mean change in quality of life assessment from baseline to each timepoint",
-      timepoint: "Weeks 12, 24, 52",
-      measurementMethod: "Quality of Life Index (QLI)"
+      title: "Clinical Response with mMS",
+      description: "Percentage of participants who achieve clinical response with mMS at Week 10",
+      timepoint: "Week 10",
+      measurementMethod: "Modified Mayo Score (mMS)"
     },
     {
       id: "4",
       type: "secondary" as const,
-      title: "Time to First Clinical Response",
-      description: "Time from randomization to first achievement of clinical response criteria",
-      timepoint: "Throughout study",
-      measurementMethod: "Kaplan-Meier survival analysis"
+      title: "Symptomatic Response",
+      description: "Percentage of participants who achieve symptomatic response from baseline to week 8",
+      timepoint: "Week 8",
+      measurementMethod: "Symptomatic Response Assessment"
     },
     {
       id: "5",
       type: "secondary" as const,
-      title: "Change from Baseline in Biomarker Levels",
-      description: "Mean change in key biomarker concentrations from baseline",
-      timepoint: "Weeks 12, 24, 52",
-      measurementMethod: "ELISA assay"
-    },
-    {
-      id: "6",
-      type: "secondary" as const,
-      title: "Safety Endpoint - Incidence of Treatment-Emergent Adverse Events",
-      description: "Proportion of participants experiencing treatment-emerggent adverse events",
-      timepoint: "Throughout study",
-      measurementMethod: "MedDRA coding and CTCAE grading"
+      title: "Pharmacokinetics (PK)",
+      description: "Plasma concentrations of LY4268989 throughout the study period",
+      timepoint: "Baseline to Week 52",
+      measurementMethod: "Plasma Concentration Analysis"
     }
   ];
 
   const currentEndpoints = trialData?.endpoints || mockEndpoints;
 
-  const filteredEndpoints = currentEndpoints.filter(endpoint => 
+  const filteredEndpoints = currentEndpoints.filter(endpoint =>
     filter === 'all' || endpoint.type === filter
   );
 
@@ -169,7 +161,7 @@ export function EndpointsList() {
                     </button>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Description:</p>
@@ -184,7 +176,7 @@ export function EndpointsList() {
                       <p className="text-sm text-gray-700">{endpoint.description}</p>
                     )}
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Assessment Timepoint:</p>
@@ -255,7 +247,7 @@ export function EndpointsList() {
                     </button>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Description:</p>
@@ -270,7 +262,7 @@ export function EndpointsList() {
                       <p className="text-sm text-gray-700">{endpoint.description}</p>
                     )}
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Assessment Timepoint:</p>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Calendar, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { useCopilotAction } from "@copilotkit/react-core";
 import VisitFormModal from './VisitFormModal';
 
 interface ScheduledVisit {
@@ -61,6 +62,25 @@ export default function ScheduledVisitsTab({ patientId }: ScheduledVisitsTabProp
   const [visits, setVisits] = useState<ScheduledVisit[]>(mockVisits);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // AI action to log visit data (Improvement 07)
+  useCopilotAction({
+    name: "logVisitData",
+    description: "Log a new clinical trial visit entry",
+    parameters: [
+      { name: "visitName", description: "Name of the visit (e.g., Week 4)", type: "string", required: true },
+      { name: "date", description: "Date of the visit (YYYY-MM-DD)", type: "string" },
+      { name: "status", description: "Status of the visit", type: "string" }
+    ],
+    handler: async ({ visitName, date, status }) => {
+      handleAddVisit({
+        visitName,
+        scheduledDate: date || new Date().toISOString().split('T')[0],
+        status: (status as any) || 'completed'
+      });
+      return `Logged visit: ${visitName}`;
+    }
+  });
+
   const getStatusIcon = (status: ScheduledVisit['status']) => {
     switch (status) {
       case 'completed':
@@ -81,7 +101,7 @@ export default function ScheduledVisitsTab({ patientId }: ScheduledVisitsTabProp
       'missed': 'bg-red-100 text-red-800',
       'scheduled': 'bg-gray-100 text-gray-800'
     };
-    
+
     return (
       <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[status]}`}>
         {status.replace('-', ' ')}
@@ -96,7 +116,7 @@ export default function ScheduledVisitsTab({ patientId }: ScheduledVisitsTabProp
       'in-progress': 'bg-yellow-100 text-yellow-800',
       'not-started': 'bg-gray-100 text-gray-800'
     };
-    
+
     return (
       <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[status]}`}>
         {status.replace('-', ' ')}
@@ -112,7 +132,7 @@ export default function ScheduledVisitsTab({ patientId }: ScheduledVisitsTabProp
       status: 'scheduled',
       ecrfStatus: 'not-started'
     };
-    
+
     setVisits([...visits, newVisit]);
     setIsModalOpen(false);
   };
@@ -155,7 +175,7 @@ export default function ScheduledVisitsTab({ patientId }: ScheduledVisitsTabProp
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {visits.map((visit) => (
+              {visits.map((visit: ScheduledVisit) => (
                 <tr key={visit.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-2">

@@ -99,6 +99,14 @@ export const useChatSessionStore = create<ChatSessionState>()(
         const newMessages = [...currentMessages, message];
         const tokenCount = calculateTokenCount(newMessages);
         
+        // Auto-rotate session if token limit exceeded (Improvement 01)
+        if (tokenCount > 8000) {
+          get().startNewSession();
+          // After rotation, the first message in the new session is the one that triggered the overflow
+          get().addMessage(message);
+          return;
+        }
+
         set({
           messages: newMessages,
           tokenCount,

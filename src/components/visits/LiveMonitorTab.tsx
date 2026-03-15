@@ -1,6 +1,7 @@
 'use client';
 
 import { Heart, Activity, Thermometer, Droplets, Wifi, WifiOff, AlertCircle } from 'lucide-react';
+import { useCopilotReadable } from "@copilotkit/react-core";
 import { VitalSignsCard, BloodPressureCard } from '@/components/monitor/VitalSignsCard';
 import { AlertFeed } from '@/components/monitor/AlertFeed';
 import { useLiveMonitor } from '@/lib/hooks/useLiveMonitor';
@@ -11,6 +12,12 @@ interface LiveMonitorTabProps {
 
 export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
   const { vitals, alerts, connection, loading, error, acknowledgeAlert, disconnect, reconnect } = useLiveMonitor(patientId);
+
+  // Share real-time vitals with AI (Improvement 09)
+  useCopilotReadable({
+    description: `Real-time vital signs and alerts for patient ${patientId || 'monitoring'}`,
+    value: { vitals, activeAlerts: alerts.filter(a => !a.acknowledged) },
+  });
 
   if (loading) {
     return (
@@ -54,11 +61,10 @@ export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
           )}
           <button
             onClick={connection.status === 'connected' ? disconnect : reconnect}
-            className={`px-3 py-1 text-sm rounded-md transition-colors ${
-              connection.status === 'connected' 
-                ? 'bg-red-100 text-red-700 hover:bg-red-200' 
-                : 'bg-green-100 text-green-700 hover:bg-green-200'
-            }`}
+            className={`px-3 py-1 text-sm rounded-md transition-colors ${connection.status === 'connected'
+              ? 'bg-red-100 text-red-700 hover:bg-red-200'
+              : 'bg-green-100 text-green-700 hover:bg-green-200'
+              }`}
           >
             {connection.status === 'connected' ? 'Disconnect' : 'Connect'}
           </button>

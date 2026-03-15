@@ -1,7 +1,6 @@
 "use client";
 
-// import { useCopilotReadable } from "@copilotkit/react-core";
-// import { useCopilotAction } from "@copilotkit/react-core";
+import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core";
 import { useState, useEffect } from "react";
 import { useTrialDesignStore } from "@/lib/stores/trialDesignStore";
 import { TrialPhaseCard } from "@/components/trial-design/TrialPhaseCard";
@@ -11,57 +10,108 @@ import { EndpointsList } from "@/components/trial-design/EndpointsList";
 import { TrialDesignData } from "@/lib/stores/trialDesignStore";
 
 export default function TrialDesignPage() {
-  const { trialData, updateTrialData } = useTrialDesignStore();
+  const { trialData, updateTrialData, setTrialData } = useTrialDesignStore();
   const [activeTab, setActiveTab] = useState("overview");
 
   // Add mock data for testing
   useEffect(() => {
     if (!trialData) {
       const mockTrialData: TrialDesignData = {
-        nctId: "NCT12345678",
-        protocolTitle: "Randomized, Double-Blind, Placebo-Controlled Study of Investigational Drug",
-        sponsorName: "Acme Pharmaceuticals",
+        nctId: "NCT07415044",
+        protocolTitle: "LY4268989 in Adults With Moderately to Severely Active Ulcerative Colitis (EMERALD-3)",
+        sponsorName: "Eli Lilly and Company",
         sponsorClass: "Industry",
         phase: "Phase 2",
         studyType: "Interventional",
-        conditions: "Moderate to Severe Condition",
-        enrollmentCount: "200",
-        startDate: "2024-03-01",
-        completionDate: "2026-12-31",
-        overallStatus: "RECRUITING",
+        conditions: "Ulcerative Colitis (UC)",
+        enrollmentCount: "1431",
+        startDate: "2026-04-01",
+        completionDate: "2031-07-31",
+        overallStatus: "NOT_YET_RECRUITING",
         piName: "Dr. John Smith",
-        piAffiliation: "Medical Center Hospital",
-        indNumber: "IND123456",
+        piAffiliation: "Eli Lilly and Company",
+        indNumber: "IND168420",
         studyDetails: {
-          briefSummary: "This is a randomized, double-blind, placebo-controlled study to evaluate the efficacy and safety of investigational drug in patients with moderate to severe condition.",
-          detailedDescription: "A comprehensive 52-week treatment period with 12-week follow-up to assess long-term outcomes.",
-          primaryOutcomes: ["Change in efficacy score at Week 52", "Proportion of participants achieving clinical response"],
-          secondaryOutcomes: ["Change in quality of life", "Time to first clinical response", "Safety endpoints"]
-        }
+          briefSummary: "The main purpose of this study is to evaluate the safety and effectiveness of LY4268989 when compared to placebo in adult participants with moderately to severely active ulcerative colitis (UC). The study drug will be administered orally.",
+          detailedDescription: "A Randomized, Multicenter, Double-Blind, Placebo-Controlled Development Program to Evaluate the Efficacy and Safety of LY4268989 (MORF-057) for the Treatment of Adults With Moderately to Severely Active Ulcerative Colitis (EMERALD-3). The study will last up to approximately 108 weeks, excluding screening.",
+          primaryOutcomes: [
+            "Percentage of Participants Who Achieve Clinical Remission with Modified Mayo Score (mMS) - Week 10",
+            "Percentage of Participants Who Achieve Clinical Remission with mMS Among Participants Who Achieved Clinical Response with LY4268989 at Week 10 - Week 52"
+          ],
+          secondaryOutcomes: [
+            "Percentage of Participants Who Achieve Clinical Response with mMS - Week 10",
+            "Percentage of Participants Who Achieve Symptomatic Response - Baseline Up to Week 8",
+            "Pharmacokinetics (PK): Plasma Concentrations of LY4268989",
+            "Safety Endpoint - Incidence of Treatment-Emergent Adverse Events"
+          ]
+        },
+        eligibilityCriteria: {
+          inclusion: [
+            "Established diagnosis of UC for ≥3 months prior to randomization",
+            "Moderately to severely active UC (mMS 5-9, ES ≥2, RB ≥1)",
+            "Evidence of UC extending proximal to the rectum",
+            "Surveillance colonoscopy within 1 year if UC >8 years",
+            "Inadequate response to conventional or advanced therapy (excluding vedolizumab)",
+            "Must meet contraception requirements"
+          ],
+          exclusion: [
+            "Diagnosis of Crohn's disease, IBD unclassified, or PSC",
+            "Inherited immunodeficiency syndrome",
+            "Prior or planned bowel resection or major GI surgery",
+            "Evidence of toxic megacolon, abscess, or stricture",
+            "History of GI malignancy or any cancer within 5 years"
+          ]
+        },
+        endpoints: [
+          {
+            id: "1",
+            type: "primary",
+            title: "Clinical Remission with mMS (Week 10)",
+            description: "Percentage of participants who achieve clinical remission using the Modified Mayo Score at Week 10",
+            timepoint: "Week 10",
+            measurementMethod: "Modified Mayo Score (mMS)"
+          },
+          {
+            id: "2",
+            type: "primary",
+            title: "Clinical Remission with mMS (Week 52)",
+            description: "Percentage of participants who achieve clinical remission at Week 52 among responders at Week 10",
+            timepoint: "Week 52",
+            measurementMethod: "Modified Mayo Score (mMS)"
+          },
+          {
+            id: "3",
+            type: "secondary",
+            title: "Clinical Response with mMS",
+            description: "Percentage of participants who achieve clinical response with mMS at Week 10",
+            timepoint: "Week 10",
+            measurementMethod: "Modified Mayo Score (mMS)"
+          }
+        ]
       };
-      updateTrialData(mockTrialData);
+      setTrialData(mockTrialData);
     }
-  }, [trialData, updateTrialData]);
+  }, [trialData, setTrialData]);
 
   // Make trial data readable by CopilotKit
-  // useCopilotReadable({
-  //   description: "Complete clinical trial design data including protocol information, eligibility criteria, visit schedule, and endpoints",
-  //   value: trialData,
-  // });
+  useCopilotReadable({
+    description: "Complete clinical trial design data including protocol information, eligibility criteria, visit schedule, and endpoints",
+    value: trialData,
+  });
 
   // AI action to update trial design
-  // useCopilotAction({
-  //   name: "updateTrialDesign",
-  //   description: "Update trial design data with new information",
-  //   parameters: [
-  //     { name: "field", description: "The field to update", type: "string", required: true },
-  //     { name: "value", description: "The new value", type: "string", required: true },
-  //   ],
-  //   handler: async ({ field, value }) => {
-  //     updateTrialData({ [field]: value });
-  //     return `Updated ${field} with new value`;
-  //   },
-  // });
+  useCopilotAction({
+    name: "updateTrialDesign",
+    description: "Update trial design data with new information",
+    parameters: [
+      { name: "field", description: "The field to update", type: "string", required: true },
+      { name: "value", description: "The new value", type: "string", required: true },
+    ],
+    handler: async ({ field, value }: { field: string, value: string }) => {
+      updateTrialData({ [field]: value });
+      return `Updated ${field} with new value`;
+    },
+  });
 
   if (!trialData) {
     return (
@@ -104,7 +154,7 @@ export default function TrialDesignPage() {
               {trialData.protocolTitle}
             </h2>
             <p className="text-gray-600 mb-4">NCT ID: {trialData.nctId}</p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Sponsor</p>
@@ -120,13 +170,12 @@ export default function TrialDesignPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Status</p>
-                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                  trialData.overallStatus === "RECRUITING" 
-                    ? "bg-green-100 text-green-800"
-                    : trialData.overallStatus === "COMPLETED"
+                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${trialData.overallStatus === "RECRUITING"
+                  ? "bg-green-100 text-green-800"
+                  : trialData.overallStatus === "COMPLETED"
                     ? "bg-gray-100 text-gray-800"
                     : "bg-yellow-100 text-yellow-800"
-                }`}>
+                  }`}>
                   {trialData.overallStatus}
                 </span>
               </div>
@@ -142,11 +191,10 @@ export default function TrialDesignPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === tab.id
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
+              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === tab.id
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
             >
               <span className="mr-2">{tab.icon}</span>
               {tab.label}
@@ -160,7 +208,7 @@ export default function TrialDesignPage() {
         {activeTab === "overview" && (
           <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Trial Overview</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <h4 className="font-medium text-gray-900 mb-3">Study Details</h4>
@@ -217,13 +265,13 @@ export default function TrialDesignPage() {
         )}
 
         {activeTab === "phase" && <TrialPhaseCard trialData={trialData} />}
-        
+
         {activeTab === "eligibility" && <EligibilityCriteria />}
-        
+
         {activeTab === "visits" && <VisitScheduleMatrix />}
-        
+
         {activeTab === "endpoints" && <EndpointsList />}
-        
+
         {activeTab === "documents" && (
           <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Protocol Documents</h3>

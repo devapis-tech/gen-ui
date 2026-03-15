@@ -53,7 +53,7 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
 
   const handleFetchNctData = async (nctId?: string) => {
     const id = nctId || extractNctIdFromInput(nctInput);
-    
+
     if (!id) {
       setError("Please enter a valid NCT ID");
       return;
@@ -89,7 +89,7 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
 
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       onTrialDataFetched(mockData);
     } catch (err) {
       setError("Failed to fetch trial data. Please try again.");
@@ -100,7 +100,7 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
 
   const handleFetchLinkData = async (link?: string) => {
     const trialLink = link || trialLinkInput;
-    
+
     if (!trialLink) {
       setError("Please enter a valid trial link");
       return;
@@ -110,17 +110,17 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
     setError(null);
 
     try {
-      // First try to fetch the webpage content
-      const response = await fetch(trialLink);
+      // First try to fetch the webpage content via proxy
+      const response = await fetch(`/api/proxy?url=${encodeURIComponent(trialLink)}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch webpage: ${response.status}`);
       }
-      
+
       const htmlContent = await response.text();
-      
+
       // Use AI to extract data from the HTML content
       const extractedData = await extractClinicalTrialData(htmlContent);
-      
+
       const trialData: ClinicalTrial = {
         nctId: extractedData.nctId || "UNKNOWN",
         protocolTitle: extractedData.protocolTitle || "Extracted from link",
@@ -168,17 +168,17 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
 
     try {
       setUploadProgress(25);
-      
+
       // Extract text from PDF using API
       const extractedText = await extractFromPDF(file);
-      
+
       setUploadProgress(75);
-      
+
       // Use AI to parse the extracted text
       const extractedData = await extractClinicalTrialData(extractedText);
-      
+
       setUploadProgress(100);
-      
+
       const trialData: ClinicalTrial = {
         nctId: extractedData.nctId || "PDF_IMPORTED",
         protocolTitle: extractedData.protocolTitle || "Extracted from PDF",

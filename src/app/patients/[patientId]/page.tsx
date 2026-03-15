@@ -1,7 +1,9 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useCopilotReadable } from "@copilotkit/react-core";
 import { usePatient } from "@/lib/hooks/usePatient";
+import { useUserRole } from "@/contexts/UserRoleContext";
 import { PatientHeader } from "@/components/patients/PatientHeader";
 import { PatientDataTabs } from "@/components/patients/PatientDataTabs";
 import { ArrowLeft, Edit, Download } from "lucide-react";
@@ -11,6 +13,13 @@ export default function PatientDetailPage() {
   const params = useParams();
   const patientId = params.patientId as string;
   const { currentPatient, loading } = usePatient(patientId);
+  const { userRole } = useUserRole();
+
+  // Share patient context with AI (Improvement 06)
+  useCopilotReadable({
+    description: `Complete profile for patient ${currentPatient?.subjectId || patientId}`,
+    value: currentPatient,
+  });
 
   if (loading) {
     return (
@@ -69,7 +78,7 @@ export default function PatientDetailPage() {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Patients
         </Link>
-        
+
         <div className="flex items-center space-x-4">
           <button className="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
             <Edit className="w-4 h-4 mr-2" />
@@ -83,7 +92,7 @@ export default function PatientDetailPage() {
       </div>
 
       {/* Patient Header */}
-      <PatientHeader patient={currentPatient} />
+      <PatientHeader patient={currentPatient} userRole={userRole?.title as any} />
 
       {/* Patient Data Tabs */}
       <PatientDataTabs patient={currentPatient} />

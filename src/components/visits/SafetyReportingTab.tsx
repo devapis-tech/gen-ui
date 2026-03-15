@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, AlertTriangle, FileText, Calendar } from 'lucide-react';
+import { useCopilotAction } from "@copilotkit/react-core";
 import AEReportForm from './AEReportForm';
 
 interface AEReport {
@@ -52,6 +53,27 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
   const [aeReports, setAeReports] = useState<AEReport[]>(mockAEReports);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  // AI action to file adverse event report (Improvement 08)
+  useCopilotAction({
+    name: "fileAdverseEventReport",
+    description: "File a new adverse event report for the patient",
+    parameters: [
+      { name: "eventName", description: "Name/description of the adverse event", type: "string", required: true },
+      { name: "severity", description: "Severity grade (1-5)", type: "number", required: true },
+      { name: "causality", description: "Causality (related, possibly-related, etc.)", type: "string" },
+      { name: "isSAE", description: "Whether this is a Serious Adverse Event", type: "boolean" }
+    ],
+    handler: async ({ eventName, severity, causality, isSAE }) => {
+      handleSubmitAE({
+        eventName,
+        severity: (severity as any) || 1,
+        causality: (causality as any) || 'related',
+        isSAE: isSAE || false
+      });
+      return `Filed AE report: ${eventName}`;
+    }
+  });
+
   const getSeverityColor = (severity: number) => {
     const colors = {
       1: 'bg-green-100 text-green-800',
@@ -81,7 +103,7 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
       'unlikely-related': 'bg-blue-100 text-blue-800',
       'unrelated': 'bg-gray-100 text-gray-800'
     };
-    
+
     return (
       <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[causality]}`}>
         {causality.replace('-', ' ')}
@@ -95,7 +117,7 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
       'ongoing': 'bg-yellow-100 text-yellow-800',
       'unknown': 'bg-gray-100 text-gray-800'
     };
-    
+
     return (
       <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[outcome]}`}>
         {outcome}
@@ -116,7 +138,7 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
       meddraCode: aeData.meddraCode,
       reportedDate: new Date().toISOString().split('T')[0]
     };
-    
+
     setAeReports([newAE, ...aeReports]);
     setIsFormOpen(false);
   };
@@ -144,7 +166,7 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
 
       {/* AE Reports List */}
       <div className="space-y-4">
-        {aeReports.map((report) => (
+        {aeReports.map((report: AEReport) => (
           <div key={report.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div className="flex-1 space-y-3">
@@ -173,12 +195,12 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
                       <span className="text-sm text-gray-900">{new Date(report.onsetDate).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Causality</label>
                     <div className="mt-1">{getCausalityBadge(report.causality)}</div>
                   </div>
-                  
+
                   <div>
                     <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Outcome</label>
                     <div className="mt-1">{getOutcomeBadge(report.outcome)}</div>

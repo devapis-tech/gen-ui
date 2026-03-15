@@ -10,225 +10,108 @@ export function usePatient(patientId?: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data - in real app this would come from API
-  const mockPatients: Patient[] = [
-    {
-      id: "1",
-      subjectId: "SUBJ-001",
-      initials: "JD",
-      dateOfBirth: "1985-06-15",
-      age: 38,
-      enrollmentDate: "2024-01-15",
-      trialArm: "Treatment A",
-      cohort: "Cohort 1",
-      site: "Site A - Medical Center",
-      status: "ENROLLED",
-      currentVisit: "Week 12",
-      nextVisit: "Week 16 (2024-04-15)",
-      vitals: [
-        {
-          id: "v1",
-          date: "2024-03-15",
-          bloodPressure: "120/80",
-          heartRate: 72,
-          temperature: 98.6,
-          weight: 175.2,
-          height: 69
-        },
-        {
-          id: "v2",
-          date: "2024-02-15",
-          bloodPressure: "118/78",
-          heartRate: 70,
-          temperature: 98.4,
-          weight: 176.1,
-          height: 69
-        }
-      ],
-      visitHistory: [
-        {
-          id: "vh1",
-          visitNumber: "VISIT-001",
-          visitName: "Screening Visit",
-          date: "2024-01-10",
-          status: "COMPLETED",
-          procedures: ["Informed Consent", "Eligibility Assessment", "Baseline Labs", "ECG"],
-          notes: "Patient passed all screening criteria"
-        },
-        {
-          id: "vh2",
-          visitNumber: "VISIT-002",
-          visitName: "Baseline Visit",
-          date: "2024-01-15",
-          status: "COMPLETED",
-          procedures: ["Randomization", "Study Drug Administration", "Safety Assessment", "Questionnaires"],
-          notes: "Randomized to Treatment A"
-        },
-        {
-          id: "vh3",
-          visitNumber: "VISIT-003",
-          visitName: "Week 4 Visit",
-          date: "2024-02-12",
-          status: "COMPLETED",
-          procedures: ["Study Drug Administration", "Safety Labs", "Adverse Event Review", "Compliance Check"],
-          notes: "No adverse events reported"
-        }
-      ],
-      adverseEvents: [
-        {
-          id: "ae1",
-          patientId: "1",
-          eventName: "Headache",
-          soc: "Nervous System Disorders",
-          severity: "Grade 1",
-          onset: new Date("2024-01-17"),
-          resolution: new Date("2024-01-19"),
-          causality: "Possibly Related",
-          action: "Patient advised to take OTC pain reliever",
-          outcome: "Recovered",
-          serious: false,
-          reportedBy: "Dr. Smith",
-          reportedAt: new Date("2024-01-18"),
-          regulatoryReported: false,
-          description: "Mild headache reported 2 days after study drug administration",
-          followUpRequired: false
-        },
-        {
-          id: "ae2",
-          patientId: "1",
-          eventName: "Pneumonia",
-          soc: "Infections and Infestations",
-          severity: "Grade 3",
-          onset: new Date("2024-02-10"),
-          resolution: null,
-          causality: "Not Related",
-          action: "Patient hospitalized, relationship to study drug being investigated",
-          outcome: "Ongoing",
-          serious: true,
-          saeReason: ["hospitalization"],
-          reportedBy: "Study Coordinator",
-          reportedAt: new Date("2024-02-10"),
-          regulatoryReported: true,
-          description: "Hospitalization for pneumonia - unrelated to study drug",
-          followUpRequired: true
-        }
-      ]
-    },
-    {
-      id: "2",
-      subjectId: "SUBJ-002",
-      initials: "AB",
-      dateOfBirth: "1990-09-22",
-      age: 33,
-      enrollmentDate: "2024-02-01",
-      trialArm: "Treatment B",
-      cohort: "Cohort 2",
-      site: "Site B - Research Hospital",
-      status: "SCREENING",
-      currentVisit: "Screening",
-      nextVisit: "Baseline (2024-02-15)",
-      vitals: [
-        {
-          id: "v3",
-          date: "2024-02-01",
-          bloodPressure: "115/75",
-          heartRate: 68,
-          temperature: 98.2,
-          weight: 142.8,
-          height: 64
-        }
-      ],
-      visitHistory: [
-        {
-          id: "vh4",
-          visitNumber: "VISIT-001",
-          visitName: "Screening Visit",
-          date: "2024-02-01",
-          status: "COMPLETED",
-          procedures: ["Informed Consent", "Eligibility Assessment"],
-          notes: "Awaiting lab results"
-        }
-      ],
-      adverseEvents: []
-    },
-    {
-      id: "3",
-      subjectId: "SUBJ-003",
-      initials: "MC",
-      dateOfBirth: "1978-03-08",
-      age: 46,
-      enrollmentDate: "2023-12-01",
-      trialArm: "Placebo",
-      cohort: "Cohort 1",
-      site: "Site A - Medical Center",
-      status: "COMPLETED",
-      currentVisit: "Study Complete",
-      nextVisit: "N/A",
-      vitals: [
-        {
-          id: "v4",
-          date: "2024-03-01",
-          bloodPressure: "122/82",
-          heartRate: 75,
-          temperature: 98.8,
-          weight: 189.4,
-          height: 71
-        }
-      ],
-      visitHistory: [
-        {
-          id: "vh5",
-          visitNumber: "VISIT-001",
-          visitName: "Screening Visit",
-          date: "2023-11-28",
-          status: "COMPLETED",
-          procedures: ["Informed Consent", "Eligibility Assessment", "Baseline Labs", "ECG"],
-          notes: "Patient eligible for study"
-        },
-        {
-          id: "vh6",
-          visitNumber: "VISIT-002",
-          visitName: "Baseline Visit",
-          date: "2023-12-01",
-          status: "COMPLETED",
-          procedures: ["Randomization", "Study Drug Administration", "Safety Assessment", "Questionnaires"],
-          notes: "Randomized to Placebo"
-        },
-        {
-          id: "vh7",
-          visitNumber: "VISIT-008",
-          visitName: "Final Visit",
-          date: "2024-03-01",
-          status: "COMPLETED",
-          procedures: ["Final Assessment", "Study Completion", "Follow-up Planning"],
-          notes: "Study completed successfully"
-        }
-      ],
-      adverseEvents: [
-        {
-          id: "ae3",
-          patientId: "3",
-          eventName: "Nausea",
-          soc: "Gastrointestinal Disorders",
-          severity: "Grade 1",
-          onset: new Date("2023-12-29"),
-          resolution: new Date("2024-01-02"),
-          causality: "Possibly Related",
-          action: "Symptomatic treatment provided",
-          outcome: "Recovered",
-          serious: false,
-          reportedBy: "Dr. Smith",
-          reportedAt: new Date("2023-12-30"),
-          regulatoryReported: false,
-          description: "Mild nausea at week 4",
-          followUpRequired: false
-        }
-      ]
+  // EMERALD-3 (NCT07415044) Trial Data
+  // Drug: LY4268989 (MORF-057)
+  // Condition: Ulcerative Colitis
+  // Arms: LY Study Dose 1, LY Study Dose 2, Placebo
+  // Sites: Various (Phoenix, Scottsdale, Anaheim, etc.)
+
+  const generateMockPatients = (): Patient[] => {
+    const arms = ["LY4268989 Dose 1", "LY4268989 Dose 2", "Placebo"];
+    const cohorts = ["Cohort A", "Cohort B", "Cohort C"];
+    const sites = [
+      "Valleywise Health - Phoenix",
+      "One of a Kind CRC - Scottsdale",
+      "Clinnova Research - Anaheim",
+      "Om Research - Temple City",
+      "Rush University - Chicago",
+      "Saint Peter's - New Brunswick",
+      "Ohio State - Hilliard",
+      "Medical University SC - Charleston"
+    ];
+    const statuses: ("SCREENING" | "ENROLLED" | "COMPLETED" | "WITHDRAWN")[] = [
+      "ENROLLED", "ENROLLED", "ENROLLED", "ENROLLED", "SCREENING", "COMPLETED", "WITHDRAWN"
+    ];
+
+    const generated: Patient[] = [];
+
+    for (let i = 1; i <= 100; i++) {
+      const id = i.toString();
+      const subjectId = `EMR-${1000 + i}`;
+      const initials = String.fromCharCode(65 + (i % 26)) + String.fromCharCode(65 + ((i + 5) % 26));
+      const age = 20 + (i % 60);
+      const arm = arms[i % arms.length];
+      const cohort = cohorts[i % cohorts.length];
+      const site = sites[i % sites.length];
+      const status = i < 80 ? "ENROLLED" : statuses[i % statuses.length];
+
+      const enrollmentDate = new Date(2025, i % 12, 1 + (i % 28)).toISOString().split('T')[0];
+
+      const patient: Patient = {
+        id,
+        subjectId,
+        initials,
+        age,
+        dateOfBirth: new Date(2025 - age, 0, 1).toISOString().split('T')[0],
+        enrollmentDate,
+        trialArm: arm,
+        cohort,
+        site,
+        status,
+        currentVisit: status === "COMPLETED" ? "End of Study" : `Week ${4 * (i % 12)}`,
+        nextVisit: status === "ENROLLED" ? `Week ${(4 * (i % 12) + 4)} (2026-04-${10 + (i % 20)})` : "N/A",
+        vitals: [
+          {
+            id: `v-${i}-1`,
+            date: "2026-03-01",
+            bloodPressure: `${110 + (i % 20)}/${70 + (i % 15)}`,
+            heartRate: 65 + (i % 15),
+            temperature: 97.5 + (i % 20) / 10,
+            weight: 150 + (i % 50),
+            height: 60 + (i % 15)
+          }
+        ],
+        visitHistory: [
+          {
+            id: `vh-${i}-1`,
+            visitNumber: "V1",
+            visitName: "Screening",
+            date: enrollmentDate,
+            status: "COMPLETED",
+            procedures: ["Informed Consent", "Physical Exam", "Bloodwork"],
+            notes: "Stable UC condition"
+          }
+        ],
+        adverseEvents: i % 15 === 0 ? [
+          {
+            id: `ae-${i}-1`,
+            patientId: id,
+            eventName: i % 30 === 0 ? "Severe Flare" : "Headache",
+            soc: i % 30 === 0 ? "Gastrointestinal" : "Nervous System",
+            severity: i % 30 === 0 ? "Grade 3" : "Grade 1",
+            onset: new Date("2026-02-15"),
+            resolution: null,
+            causality: i % 30 === 0 ? "Possibly Related" : "Not Related",
+            action: "Admitted to hospital",
+            outcome: "Ongoing",
+            serious: i % 30 === 0,
+            saeReason: i % 30 === 0 ? ["hospitalization"] : [],
+            reportedBy: "Dr. Investigator",
+            reportedAt: new Date("2026-02-16"),
+            regulatoryReported: i % 30 === 0,
+            description: "Patient experienced worsening symptoms of UC.",
+            followUpRequired: i % 30 === 0
+          }
+        ] : []
+      };
+
+      generated.push(patient);
     }
-  ];
+    return generated;
+  };
 
   useEffect(() => {
-    setPatients(mockPatients);
+    setPatients(generateMockPatients());
   }, []);
 
   useEffect(() => {
@@ -251,7 +134,7 @@ export function usePatient(patientId?: string) {
   };
 
   const updatePatientStatus = (id: string, status: Patient["status"]) => {
-    setPatients(prev => 
+    setPatients(prev =>
       prev.map(p => p.id === id ? { ...p, status } : p)
     );
   };
@@ -263,7 +146,7 @@ export function usePatient(patientId?: string) {
       patientId
     };
 
-    setPatients(prev => 
+    setPatients(prev =>
       prev.map(p => {
         if (p.id === patientId) {
           return {
@@ -282,7 +165,7 @@ export function usePatient(patientId?: string) {
       id: `v${Date.now()}`
     };
 
-    setPatients(prev => 
+    setPatients(prev =>
       prev.map(p => {
         if (p.id === patientId) {
           return {
@@ -301,7 +184,7 @@ export function usePatient(patientId?: string) {
       id: `vh${Date.now()}`
     };
 
-    setPatients(prev => 
+    setPatients(prev =>
       prev.map(p => {
         if (p.id === patientId) {
           return {

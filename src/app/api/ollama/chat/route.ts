@@ -6,8 +6,10 @@ const ollamaClient = new Ollama({
   host: "https://ollama.com",
   headers: {
     Authorization: "Bearer " + process.env.OLLAMA_API_KEY,
+    "Cookie": "aid=cb42d98a-a5b2-47ae-8aea-48701f756cac",
   },
 });
+
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Ollama API error:", error);
-    
+
     // Return a mock response if API fails (for development)
     if (process.env.NODE_ENV === "development") {
       const mockResponse = "This is a mock AI response for development. Please configure your Ollama API key to get real AI responses.";

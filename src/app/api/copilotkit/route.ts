@@ -1,21 +1,58 @@
-export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-import { CopilotRuntime } from "@copilotkit/runtime";
+import {
+  CopilotRuntime,
+  OpenAIAdapter,
+  copilotRuntimeNextJSAppRouterEndpoint,
+} from "@copilotkit/runtime";
 import { NextRequest } from "next/server";
+import { OpenAI } from "openai";
 
-const copilotRuntime = new CopilotRuntime();
+export const POST = async (req: NextRequest) => {
+  const openai = new OpenAI({
+    apiKey: process.env.OLLAMA_API_KEY || "dummy-key",
+    baseURL: process.env.OLLAMA_BASE_URL || "https://ollama.com/v1",
+    defaultHeaders: {
+      "Cookie": "aid=cb42d98a-a5b2-47ae-8aea-48701f756cac"
+    }
+  });
 
-copilotRuntime.addAgent({
-  name: "default",
-  description: "Clinical Trial Assistant",
-  instructions:
-    "You are a helpful assistant that helps users complete clinical trial forms.",
-});
+  const serviceAdapter = new OpenAIAdapter({
+    openai: openai as any,
+    model: process.env.LLM_MODEL || "gpt-oss:120b"
+  });
+  const runtime = new CopilotRuntime();
 
-export async function POST(req: NextRequest) {
-  return copilotRuntime.handleRequest(req);
-}
+  const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
+    runtime,
+    serviceAdapter,
+    endpoint: "/api/copilotkit",
+  });
 
-export async function GET(req: NextRequest) {
-  return copilotRuntime.handleRequest(req);
-}
+  return handleRequest(req);
+};
+
+export const GET = async (req: NextRequest) => {
+  const openai = new OpenAI({
+    apiKey: process.env.OLLAMA_API_KEY || "dummy-key",
+    baseURL: process.env.OLLAMA_BASE_URL || "https://ollama.com/v1",
+    defaultHeaders: {
+      "Cookie": "aid=cb42d98a-a5b2-47ae-8aea-48701f756cac"
+    }
+  });
+
+  const serviceAdapter = new OpenAIAdapter({
+    openai: openai as any,
+    model: process.env.LLM_MODEL || "gpt-oss:120b"
+  });
+  const runtime = new CopilotRuntime();
+
+  const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
+    runtime,
+    serviceAdapter,
+    endpoint: "/api/copilotkit",
+  });
+
+  return handleRequest(req);
+};
+

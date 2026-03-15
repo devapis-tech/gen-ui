@@ -1,11 +1,14 @@
 "use client";
 
 import { usePatient } from "@/lib/hooks/usePatient";
+import { useUserRole } from "@/contexts/UserRoleContext";
 import Link from "next/link";
 import { User, Calendar, MapPin, ArrowRight } from "lucide-react";
 
 export default function PatientsPage() {
   const { patients, getPatientsByStatus } = usePatient();
+  const { userRole } = useUserRole();
+  const isMonitor = userRole?.title === "MONITOR";
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -24,7 +27,6 @@ export default function PatientsPage() {
   const enrolledPatients = getPatientsByStatus("ENROLLED");
   const screeningPatients = getPatientsByStatus("SCREENING");
   const completedPatients = getPatientsByStatus("COMPLETED");
-  const withdrawnPatients = getPatientsByStatus("WITHDRAWN");
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -47,7 +49,7 @@ export default function PatientsPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -59,7 +61,7 @@ export default function PatientsPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -71,7 +73,7 @@ export default function PatientsPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -90,7 +92,7 @@ export default function PatientsPage() {
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">All Patients</h2>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -125,13 +127,13 @@ export default function PatientsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {patients.map((patient) => (
+              {patients.map((patient: any) => (
                 <tr key={patient.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {patient.subjectId}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {patient.initials}
+                    {isMonitor ? "***" : patient.initials}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {patient.age || "N/A"}
