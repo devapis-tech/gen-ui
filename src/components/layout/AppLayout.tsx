@@ -34,21 +34,23 @@ function ChatSidebarSkeleton() {
 
 export function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Left Column: Main Navigation (Fixed 256px) */}
+    <div className="flex min-h-screen bg-gray-50 overflow-hidden">
+      {/* Left Column: Main Navigation */}
       <MainSidebar />
 
       {/* Center Column: Main Content (Scrollable) */}
-      <main className="flex-1 flex flex-col relative ml-64 mr-[320px] overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden lg:ml-64 lg:mr-[320px] ml-0 mr-0">
         <div className="flex-1 overflow-y-auto w-full">
           {children}
         </div>
       </main>
 
-      {/* Right Column: AI Assistant (Fixed 320px) — lazy loaded so it never blocks navigation */}
-      <Suspense fallback={<ChatSidebarSkeleton />}>
-        <PersistentChatSidebar />
-      </Suspense>
+      {/* Right Column: AI Assistant — hidden on mobile, visible on desktop */}
+      <div className="hidden lg:block fixed right-0 top-0 h-full w-[320px] z-40">
+        <Suspense fallback={<ChatSidebarSkeleton />}>
+          <PersistentChatSidebar />
+        </Suspense>
+      </div>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { Document } from 'mongodb';
+
 export interface ClinicalTrial {
   nctId: string;
   protocolTitle: string;

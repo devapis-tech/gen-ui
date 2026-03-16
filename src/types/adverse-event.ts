@@ -1,3 +1,5 @@
+import { Document } from 'mongodb';
+
 export interface AdverseEvent {
   id: string;
   patientId: string;

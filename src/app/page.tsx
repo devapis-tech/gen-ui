@@ -197,17 +197,7 @@ export default function Home() {
         {renderCurrentStep()}
       </main>
 
-      {/* <ChatSidebar /> */}
-
-      <CopilotPopup
-        instructions="You are a helpful assistant for clinical trial forms. Help users navigate the workflow, extract trial data, and complete forms accurately."
-        labels={{
-          title: "Multiplier Clinic Agent",
-          initial: "Hi! I'm your Multiplier Clinic Agent. I can help you complete your clinical trial forms. Just ask me anything!",
-        }}
-        defaultOpen={true}
-        clickOutsideToClose={false}
-      />
+      {/* Chat is handled by PersistentChatSidebar in AppLayout */}
     </div>
   );
 }

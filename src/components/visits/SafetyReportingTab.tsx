@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Plus, AlertTriangle, FileText, Calendar } from 'lucide-react';
 import { useCopilotAction } from "@copilotkit/react-core";
+import { usePatient } from '@/lib/hooks/usePatient';
+import { AdverseEvent } from '@/types/adverse-event';
 import AEReportForm from './AEReportForm';
 
 interface AEReport {
@@ -50,7 +52,7 @@ const mockAEReports: AEReport[] = [
 ];
 
 export default function SafetyReportingTab({ patientId }: SafetyReportingTabProps) {
-  const [aeReports, setAeReports] = useState<AEReport[]>(mockAEReports);
+  const { currentPatient, addAdverseEvent } = usePatient(patientId);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   // AI action to file adverse event report (Improvement 08)
@@ -64,12 +66,42 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
       { name: "isSAE", description: "Whether this is a Serious Adverse Event", type: "boolean" }
     ],
     handler: async ({ eventName, severity, causality, isSAE }) => {
-      handleSubmitAE({
-        eventName,
-        severity: (severity as any) || 1,
-        causality: (causality as any) || 'related',
-        isSAE: isSAE || false
-      });
+      // Convert severity from number to string format
+      const severityMap: { [key: number]: AdverseEvent['severity'] } = {
+        1: 'Grade 1',
+        2: 'Grade 2', 
+        3: 'Grade 3',
+        4: 'Grade 4',
+        5: 'Grade 5'
+      };
+
+      // Convert causality to match AdverseEvent type
+      const causalityMap: { [key: string]: AdverseEvent['causality'] } = {
+        'related': 'Related',
+        'possibly-related': 'Possibly Related',
+        'unlikely-related': 'Not Related',
+        'unrelated': 'Not Related'
+      };
+
+      const adverseEventData: Omit<AdverseEvent, 'id' | 'patientId'> = {
+        eventName: eventName || 'Unknown Event',
+        soc: 'General Disorders', // Default System Organ Class
+        severity: severityMap[severity as number] || 'Grade 1',
+        onset: new Date(),
+        resolution: null,
+        causality: causalityMap[causality || 'related'] || 'Unknown',
+        action: 'Under investigation',
+        outcome: 'Ongoing',
+        serious: isSAE || false,
+        reportedBy: 'AI Assistant',
+        reportedAt: new Date(),
+        regulatoryReported: false,
+        description: `Adverse event reported via AI assistant: ${eventName}`,
+        followUpRequired: true,
+        nextFollowUp: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
+      };
+
+      addAdverseEvent(patientId, adverseEventData);
       return `Filed AE report: ${eventName}`;
     }
   });
@@ -111,35 +143,82 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
     );
   };
 
-  const getOutcomeBadge = (outcome: AEReport['outcome']) => {
+  const getOutcomeBadgeFromAdverseEvent = (outcome: string) => {
     const styles = {
-      'resolved': 'bg-green-100 text-green-800',
-      'ongoing': 'bg-yellow-100 text-yellow-800',
-      'unknown': 'bg-gray-100 text-gray-800'
+      'Recovered': 'bg-green-100 text-green-800',
+      'Ongoing': 'bg-yellow-100 text-yellow-800',
+      'Unknown': 'bg-gray-100 text-gray-800'
     };
 
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[outcome]}`}>
+      <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[outcome as keyof typeof styles] || 'bg-gray-100 text-gray-800'}`}>
         {outcome}
       </span>
     );
   };
 
-  const handleSubmitAE = (aeData: Partial<AEReport>) => {
-    const newAE: AEReport = {
-      id: Date.now().toString(),
-      eventName: aeData.eventName || 'Unknown Event',
-      severity: aeData.severity || 1,
-      onsetDate: aeData.onsetDate || new Date().toISOString().split('T')[0],
-      causality: aeData.causality || 'unrelated',
-      actionTaken: aeData.actionTaken || 'None',
-      outcome: aeData.outcome || 'ongoing',
-      isSAE: aeData.isSAE || false,
-      meddraCode: aeData.meddraCode,
-      reportedDate: new Date().toISOString().split('T')[0]
+  const getCausalityBadgeFromAdverseEvent = (causality: AdverseEvent['causality']) => {
+    const styles = {
+      'Related': 'bg-red-100 text-red-800',
+      'Possibly Related': 'bg-yellow-100 text-yellow-800',
+      'Not Related': 'bg-blue-100 text-blue-800',
+      'Unknown': 'bg-gray-100 text-gray-800'
     };
 
-    setAeReports([newAE, ...aeReports]);
+    return (
+      <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[causality] || 'bg-gray-100 text-gray-800'}`}>
+        {causality}
+      </span>
+    );
+  };
+
+  const getSeverityColorFromGrade = (severity: AdverseEvent['severity']) => {
+    const colors = {
+      'Grade 1': 'bg-green-100 text-green-800',
+      'Grade 2': 'bg-yellow-100 text-yellow-800',
+      'Grade 3': 'bg-orange-100 text-orange-800',
+      'Grade 4': 'bg-red-100 text-red-800',
+      'Grade 5': 'bg-purple-100 text-purple-800'
+    };
+    return colors[severity] || 'bg-gray-100 text-gray-800';
+  };
+
+  const handleSubmitAE = (aeData: Partial<AEReport>) => {
+    // Convert AEReport format to AdverseEvent format
+    const severityMap: { [key: number]: AdverseEvent['severity'] } = {
+      1: 'Grade 1',
+      2: 'Grade 2', 
+      3: 'Grade 3',
+      4: 'Grade 4',
+      5: 'Grade 5'
+    };
+
+    const causalityMap: { [key: string]: AdverseEvent['causality'] } = {
+      'related': 'Related',
+      'possibly-related': 'Possibly Related',
+      'unlikely-related': 'Not Related',
+      'unrelated': 'Not Related'
+    };
+
+    const adverseEventData: Omit<AdverseEvent, 'id' | 'patientId'> = {
+      eventName: aeData.eventName || 'Unknown Event',
+      soc: 'General Disorders',
+      severity: severityMap[aeData.severity || 1],
+      onset: new Date(aeData.onsetDate || new Date().toISOString().split('T')[0]),
+      resolution: aeData.outcome === 'resolved' ? new Date() : null,
+      causality: causalityMap[aeData.causality || 'unrelated'],
+      action: aeData.actionTaken || 'None',
+      outcome: aeData.outcome === 'resolved' ? 'Recovered' : 'Ongoing',
+      serious: aeData.isSAE || false,
+      reportedBy: 'Clinical Staff',
+      reportedAt: new Date(),
+      regulatoryReported: false,
+      description: `Adverse event: ${aeData.eventName}`,
+      followUpRequired: aeData.outcome !== 'resolved',
+      nextFollowUp: aeData.outcome !== 'resolved' ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) : undefined
+    };
+
+    addAdverseEvent(patientId, adverseEventData);
     setIsFormOpen(false);
   };
 
@@ -166,23 +245,23 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
 
       {/* AE Reports List */}
       <div className="space-y-4">
-        {aeReports.map((report: AEReport) => (
-          <div key={report.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+        {currentPatient?.adverseEvents?.map((event: AdverseEvent) => (
+          <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div className="flex-1 space-y-3">
                 {/* Header */}
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
-                    {report.isSAE && (
+                    {event.serious && (
                       <span className="flex items-center space-x-1 px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
                         <AlertTriangle className="w-3 h-3" />
                         <span>SAE</span>
                       </span>
                     )}
-                    <h3 className="text-lg font-medium text-gray-900">{report.eventName}</h3>
+                    <h3 className="text-lg font-medium text-gray-900">{event.eventName}</h3>
                   </div>
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${getSeverityColor(report.severity)}`}>
-                    {getSeverityLabel(report.severity)}
+                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${getSeverityColorFromGrade(event.severity)}`}>
+                    {event.severity}
                   </span>
                 </div>
 
@@ -192,51 +271,47 @@ export default function SafetyReportingTab({ patientId }: SafetyReportingTabProp
                     <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Onset Date</label>
                     <div className="flex items-center space-x-1 mt-1">
                       <Calendar className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-900">{new Date(report.onsetDate).toLocaleDateString()}</span>
+                      <span className="text-sm text-gray-900">{event.onset.toLocaleDateString()}</span>
                     </div>
                   </div>
 
                   <div>
                     <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Causality</label>
-                    <div className="mt-1">{getCausalityBadge(report.causality)}</div>
+                    <div className="mt-1">{getCausalityBadgeFromAdverseEvent(event.causality)}</div>
                   </div>
 
                   <div>
                     <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Outcome</label>
-                    <div className="mt-1">{getOutcomeBadge(report.outcome)}</div>
+                    <div className="mt-1">{getOutcomeBadgeFromAdverseEvent(event.outcome)}</div>
                   </div>
                 </div>
 
                 {/* Action Taken */}
                 <div>
                   <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Action Taken</label>
-                  <p className="mt-1 text-sm text-gray-900">{report.actionTaken}</p>
+                  <p className="mt-1 text-sm text-gray-900">{event.action}</p>
                 </div>
 
                 {/* Footer */}
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div className="flex items-center space-x-4 text-xs text-gray-500">
-                    {report.meddraCode && (
-                      <span className="flex items-center space-x-1">
-                        <FileText className="w-3 h-3" />
-                        <span>MedDRA: {report.meddraCode}</span>
-                      </span>
+                    <span>Reported by: {event.reportedBy}</span>
+                    <span>Reported: {event.reportedAt.toLocaleDateString()}</span>
+                    {event.followUpRequired && (
+                      <span className="text-orange-600">Follow-up required</span>
                     )}
-                    <span>Reported: {new Date(report.reportedDate).toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        ))}
+        )) || (
+          <div className="text-center py-12">
+            <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500">No adverse events reported for this patient.</p>
+          </div>
+        )}
       </div>
-
-      {aeReports.length === 0 && (
-        <div className="text-center py-12">
-          <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">No adverse events reported for this patient.</p>
-        </div>
-      )}
     </div>
   );
 }

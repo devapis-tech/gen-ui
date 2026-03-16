@@ -10,7 +10,8 @@ import {
   AlertTriangle,
   FileText,
   ClipboardList,
-  Settings
+  Settings,
+  Bug
 } from "lucide-react";
 
 export interface NavItem {
@@ -30,6 +31,7 @@ export const navItems: NavItem[] = [
   { label: "Adverse Events", route: "/adverse-events", icon: AlertTriangle, roles: ["ADMIN", "COORDINATOR", "MONITOR"] },
   { label: "Documents", route: "/documents", icon: FileText, roles: ["ADMIN", "COORDINATOR", "MONITOR"] },
   { label: "Forms", route: "/forms", icon: ClipboardList, roles: ["ADMIN", "COORDINATOR", "MONITOR", "PATIENT"] },
+  { label: "Issue Tracker", route: "/issues", icon: Bug, roles: ["ADMIN", "COORDINATOR", "MONITOR", "PATIENT"] },
   { label: "Settings", route: "/settings", icon: Settings, roles: ["ADMIN"] },
 ];
 
