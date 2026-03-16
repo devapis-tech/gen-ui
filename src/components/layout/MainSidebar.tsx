@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRoleNav } from "@/lib/hooks/useRoleNav";
@@ -9,9 +9,27 @@ import { Menu, X } from "lucide-react";
 
 export function MainSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openIssuesCount, setOpenIssuesCount] = useState(0);
   const pathname = usePathname();
   const { navItems } = useRoleNav();
   const { userRole, setUserRole } = useUserRole();
+
+  useEffect(() => {
+    const fetchOpenIssuesCount = async () => {
+      try {
+        const response = await fetch('/api/issues');
+        if (response.ok) {
+          const issues = await response.json();
+          const openCount = issues.filter((issue: any) => issue.status === 'open').length;
+          setOpenIssuesCount(openCount);
+        }
+      } catch (error) {
+        console.error('Failed to fetch issues count:', error);
+      }
+    };
+
+    fetchOpenIssuesCount();
+  }, []);
 
   return (
     <>
@@ -34,7 +52,7 @@ export function MainSidebar() {
         {/* App Logo/Name */}
         <div className="p-6 border-b border-gray-800">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-black text-lg text-white">
+            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center font-black text-lg text-white">
               M
             </div>
             <div>
@@ -55,13 +73,20 @@ export function MainSidebar() {
                 key={item.route}
                 href={item.route}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
-                  ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
+                className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
+                  ? "bg-accent text-white shadow-lg shadow-accent-dark/20"
                   : "text-gray-400 hover:bg-gray-800 hover:text-white"
                   }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? "text-white" : "group-hover:text-white"}`} />
-                <span className="font-medium text-sm">{item.label}</span>
+                <div className="flex items-center space-x-3">
+                  <Icon className={`w-5 h-5 ${isActive ? "text-white" : "group-hover:text-white"}`} />
+                  <span className="font-medium text-sm">{item.label}</span>
+                </div>
+                {item.route === "/issues" && openIssuesCount > 0 && (
+                  <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    {openIssuesCount}
+                  </span>
+                )}
               </Link>
             );
           })}

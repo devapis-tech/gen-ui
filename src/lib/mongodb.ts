@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection, Document, WithId, Filter, UpdateFilter } from 'mongodb';
+import { MongoClient, Db, Collection, Document, WithId, Filter, UpdateFilter, OptionalUnlessRequiredId } from 'mongodb';
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Please add your MongoDB URI to .env.local');
@@ -37,42 +37,42 @@ export async function getDatabase(): Promise<Db> {
 }
 
 // Generic collection operations
-export async function getCollection<T = any>(collectionName: string): Promise<Collection<T>> {
+export async function getCollection<T extends Document = any>(collectionName: string): Promise<Collection<T>> {
   const db = await getDatabase();
   return db.collection<T>(collectionName);
 }
 
 // Common CRUD operations
-export async function findOne<T = any>(collectionName: string, query: object): Promise<T | null> {
+export async function findOne<T extends Document = any>(collectionName: string, query: Filter<T>): Promise<WithId<T> | null> {
   const collection = await getCollection<T>(collectionName);
   const result = await collection.findOne(query);
   return result || null;
 }
 
-export async function findMany<T = any>(collectionName: string, query: object = {}, options: object = {}): Promise<T[]> {
+export async function findMany<T extends Document = any>(collectionName: string, query: Filter<T> = {}, options: object = {}): Promise<WithId<T>[]> {
   const collection = await getCollection<T>(collectionName);
   return await collection.find(query, options).toArray();
 }
 
-export async function insertOne<T = any>(collectionName: string, document: T): Promise<T> {
+export async function insertOne<T extends Document = any>(collectionName: string, document: OptionalUnlessRequiredId<T>): Promise<WithId<T>> {
   const collection = await getCollection<T>(collectionName);
-  const result = await collection.insertOne(document as any);
-  return { ...document, _id: result.insertedId } as T;
+  const result = await collection.insertOne(document);
+  return { ...document, _id: result.insertedId } as WithId<T>;
 }
 
-export async function updateOne<T = any>(collectionName: string, query: object, update: object): Promise<T | null> {
+export async function updateOne<T extends Document = any>(collectionName: string, query: Filter<T>, update: Partial<T>): Promise<WithId<T> | null> {
   const collection = await getCollection<T>(collectionName);
   const result = await collection.findOneAndUpdate(query, { $set: update }, { returnDocument: 'after' });
-  return result.value || null;
+  return result?.value || null;
 }
 
-export async function deleteOne<T = any>(collectionName: string, query: object): Promise<boolean> {
+export async function deleteOne<T extends Document = any>(collectionName: string, query: Filter<T>): Promise<boolean> {
   const collection = await getCollection<T>(collectionName);
   const result = await collection.deleteOne(query);
   return result.deletedCount === 1;
 }
 
-export async function countDocuments<T = any>(collectionName: string, query: object = {}): Promise<number> {
+export async function countDocuments<T extends Document = any>(collectionName: string, query: Filter<T> = {}): Promise<number> {
   const collection = await getCollection<T>(collectionName);
   return await collection.countDocuments(query);
 }

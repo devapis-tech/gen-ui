@@ -35,28 +35,27 @@ const generateMockVitals = (): VitalsData => {
       trend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable',
       normalRange: { systolic: { min: 90, max: 140 }, diastolic: { min: 60, max: 90 } }
     },
-    spo2: {
-      value: 98 + Math.floor(Math.random() * 4) - 2,
-      unit: '%',
-      status: 'normal',
-      trend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable',
-      normalRange: { min: 95, max: 100 }
-    },
-    temperature: {
-      value: 98.6 + (Math.random() * 2 - 1),
-      unit: '°F',
-      status: 'normal',
-      trend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable',
-      normalRange: { min: 97.0, max: 99.5 }
-    },
-    respiratoryRate: {
-      value: 16 + Math.floor(Math.random() * 4) - 2,
-      unit: 'bpm',
-      status: 'normal',
-      trend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable',
-      normalRange: { min: 12, max: 20 }
-    }
-  };
+  spo2: {
+    value: 98 + Math.floor(Math.random() * 4) - 2,
+    unit: '%',
+    status: 'normal',
+    trend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable',
+    normalRange: { min: 95, max: 100 }
+  },
+  temperature: {
+    value: 98.6 + (Math.random() * 2 - 1),
+    unit: '°F',
+    status: 'normal',
+    trend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable',
+    normalRange: { min: 97.0, max: 99.5 }
+  },
+  respiratoryRate: {
+    value: 16 + Math.floor(Math.random() * 4) - 2,
+    unit: 'bpm',
+    status: 'normal',
+    trend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable',
+    normalRange: { min: 12, max: 20 }
+  }
 };
 
 const generateMockAlerts = (vitals: VitalsData): VitalAlert[] => {

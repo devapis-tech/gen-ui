@@ -8,19 +8,37 @@ interface IssueReport {
   title: string;
   description: string;
   severity: "low" | "medium" | "high" | "critical";
-  category: "bug" | "feature_request" | "ui_issue" | "performance" | "other";
+  category: "bug" | "feature_request" | "ui_issue" | "performance" | "other" | "data_query" | "protocol_deviation" | "sae_escalation";
   reporter: string;
   timestamp: Date;
   status: "open" | "in_progress" | "resolved";
+  linkedTo?: {
+    patientId?: string;
+    formId?: string;
+    visitId?: string;
+    aeId?: string;
+    documentId?: string;
+  };
+  assignee?: string;
+  dueDate?: Date;
+  issueType?: "data_query" | "protocol_deviation" | "system_bug" | "feature_request" | "sae_escalation";
 }
 
 interface IssueReportFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (issue: Omit<IssueReport, "id" | "timestamp" | "status">) => void;
+  sourceContext?: {
+    patientId?: string;
+    formId?: string;
+    visitId?: string;
+    aeId?: string;
+    documentId?: string;
+    pageType?: string;
+  };
 }
 
-export function IssueReportForm({ isOpen, onClose, onSubmit }: IssueReportFormProps) {
+export function IssueReportForm({ isOpen, onClose, onSubmit, sourceContext }: IssueReportFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -73,9 +91,12 @@ export function IssueReportForm({ isOpen, onClose, onSubmit }: IssueReportFormPr
       feature_request: HelpCircle,
       ui_issue: AlertCircle,
       performance: AlertTriangle,
-      other: AlertCircle
+      other: AlertCircle,
+      data_query: AlertCircle,
+      protocol_deviation: AlertTriangle,
+      sae_escalation: AlertTriangle
     };
-    return icons[category];
+    return icons[category] || AlertCircle;
   };
 
   if (!isOpen) return null;
@@ -131,6 +152,9 @@ export function IssueReportForm({ isOpen, onClose, onSubmit }: IssueReportFormPr
                 { value: "feature_request", label: "Feature Request", icon: HelpCircle },
                 { value: "ui_issue", label: "UI Issue", icon: AlertCircle },
                 { value: "performance", label: "Performance", icon: AlertTriangle },
+                { value: "data_query", label: "Data Query", icon: AlertCircle },
+                { value: "protocol_deviation", label: "Protocol Deviation", icon: AlertTriangle },
+                { value: "sae_escalation", label: "SAE Escalation", icon: AlertTriangle },
                 { value: "other", label: "Other", icon: AlertCircle }
               ].map(({ value, label, icon: Icon }) => (
                 <button
@@ -150,7 +174,58 @@ export function IssueReportForm({ isOpen, onClose, onSubmit }: IssueReportFormPr
             </div>
           </div>
 
-          {/* Severity */}
+          {/* Issue Templates */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Issue Type Template
+            </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                { value: "data_query", label: "📋 Data Query", description: "Form field clarification" },
+                { value: "protocol_deviation", label: "⚠️ Protocol Deviation", description: "Study protocol violation" },
+                { value: "system_bug", label: "🐛 System Bug", description: "Technical issue or error" },
+                { value: "feature_request", label: "💡 Feature Request", description: "New functionality suggestion" },
+                { value: "sae_escalation", label: "🔴 SAE Escalation", description: "Serious adverse event reporting" }
+              ].map(({ value, label, description }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => {
+                    setFormData({ 
+                      ...formData, 
+                      category: value.replace("system_", "").replace("_escalation", "") as IssueReport["category"],
+                      title: label.split(" ")[1] + " - " + description
+                    });
+                  }}
+                  className="text-left p-3 border rounded-lg hover:border-accent hover:bg-accent/10 transition-colors"
+                >
+                  <div className="font-medium text-sm">{label}</div>
+                  <div className="text-xs text-gray-500">{description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Linked Entities */}
+          {(sourceContext || Object.keys(sourceContext || {}).length > 0) && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Linked Entities (Context)
+              </label>
+              <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <div className="text-sm text-gray-600">
+                  {sourceContext?.patientId && <div>• Patient: {sourceContext.patientId}</div>}
+                  {sourceContext?.formId && <div>• Form: {sourceContext.formId}</div>}
+                  {sourceContext?.visitId && <div>• Visit: {sourceContext.visitId}</div>}
+                  {sourceContext?.aeId && <div>• AE: {sourceContext.aeId}</div>}
+                  {sourceContext?.documentId && <div>• Document: {sourceContext.documentId}</div>}
+                  {!sourceContext || Object.keys(sourceContext).length === 0 && (
+                    <div className="text-gray-400">No context available</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           <div>
             <label htmlFor="severity" className="block text-sm font-medium text-gray-700 mb-2">
               Severity Level <span className="text-red-500">*</span>

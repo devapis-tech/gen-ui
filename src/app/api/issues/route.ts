@@ -7,10 +7,20 @@ interface IssueReport {
   title: string;
   description: string;
   severity: "low" | "medium" | "high" | "critical";
-  category: "bug" | "feature_request" | "ui_issue" | "performance" | "other";
+  category: "bug" | "feature_request" | "ui_issue" | "performance" | "other" | "data_query" | "protocol_deviation" | "sae_escalation";
   reporter: string;
   timestamp: Date;
   status: "open" | "in_progress" | "resolved";
+  linkedTo?: {
+    patientId?: string;
+    formId?: string;
+    visitId?: string;
+    aeId?: string;
+    documentId?: string;
+  };
+  assignee?: string;
+  dueDate?: Date;
+  issueType?: "data_query" | "protocol_deviation" | "system_bug" | "feature_request" | "sae_escalation";
 }
 
 export async function GET(request: NextRequest) {

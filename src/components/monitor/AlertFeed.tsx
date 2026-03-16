@@ -146,7 +146,7 @@ export function AlertFeed({ alerts, onAcknowledgeAlert, maxAlerts = 10 }: AlertF
                   {!alert.acknowledged && (
                     <button
                       onClick={() => onAcknowledgeAlert(alert.id)}
-                      className="ml-4 px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                      className="ml-4 px-3 py-1 text-xs bg-accent text-white rounded-md bg-accent-hover transition-colors"
                     >
                       Acknowledge
                     </button>

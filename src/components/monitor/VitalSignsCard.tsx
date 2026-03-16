@@ -11,6 +11,9 @@ interface VitalSignsCardProps {
   normalRange?: string;
   icon?: React.ReactNode;
   lastUpdate?: Date;
+  patientId?: string;
+  vitalType?: string;
+  onFlagAsAE?: (patientId: string, vitalType: string, value: string) => void;
 }
 
 export function VitalSignsCard({
@@ -21,7 +24,10 @@ export function VitalSignsCard({
   trend,
   normalRange,
   icon,
-  lastUpdate
+  lastUpdate,
+  patientId,
+  vitalType,
+  onFlagAsAE
 }: VitalSignsCardProps) {
   const getStatusColor = () => {
     switch (status) {
@@ -103,6 +109,16 @@ export function VitalSignsCard({
           Last: {lastUpdate.toLocaleTimeString()}
         </div>
       )}
+
+      {/* Flag as AE Button */}
+      {patientId && vitalType && onFlagAsAE && (
+        <button
+          onClick={() => onFlagAsAE(patientId, vitalType, `${formatValue()}${unit}`)}
+          className="mt-2 w-full px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors"
+        >
+          ⚠️ Flag as Adverse Event
+        </button>
+      )}
     </div>
   );
 }
@@ -115,6 +131,8 @@ interface BloodPressureCardProps {
   trend?: 'up' | 'down' | 'stable';
   normalRange: { systolic: { min: number; max: number }; diastolic: { min: number; max: number } };
   lastUpdate?: Date;
+  patientId?: string;
+  onFlagAsAE?: (patientId: string, vitalType: string, value: string) => void;
 }
 
 export function BloodPressureCard({
@@ -123,7 +141,9 @@ export function BloodPressureCard({
   status,
   trend,
   normalRange,
-  lastUpdate
+  lastUpdate,
+  patientId,
+  onFlagAsAE
 }: BloodPressureCardProps) {
   const getStatusColor = () => {
     switch (status) {
@@ -189,6 +209,16 @@ export function BloodPressureCard({
         <div className="text-xs text-gray-500">
           Last: {lastUpdate.toLocaleTimeString()}
         </div>
+      )}
+
+      {/* Flag as AE Button */}
+      {patientId && onFlagAsAE && (
+        <button
+          onClick={() => onFlagAsAE(patientId, 'blood_pressure', `${systolic}/${diastolic} mmHg`)}
+          className="mt-2 w-full px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors"
+        >
+          ⚠️ Flag as Adverse Event
+        </button>
       )}
     </div>
   );

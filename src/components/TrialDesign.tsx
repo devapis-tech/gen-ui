@@ -27,7 +27,7 @@ export function TrialDesign({ trialData, onBack, onContinue }: TrialDesignProps)
           <p className="text-gray-500">No trial data available. Please import trial data first.</p>
           <button
             onClick={onBack}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="mt-4 px-4 py-2 bg-accent text-white rounded-lg bg-accent-hover"
           >
             Go Back
           </button>
@@ -41,7 +41,7 @@ export function TrialDesign({ trialData, onBack, onContinue }: TrialDesignProps)
       <div className="mb-6">
         <button
           onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+          className="bg-accent text-white py-2 px-6 rounded-lg bg-accent-hover transition-colors"
         >
           <span className="mr-2">←</span>
           Back to Workspace
@@ -198,7 +198,7 @@ export function TrialDesign({ trialData, onBack, onContinue }: TrialDesignProps)
                 <h4 className="font-medium text-gray-900 mb-3">Study Arms</h4>
                 <div className="space-y-2">
                   <div className="flex items-center">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                    <div className="w-3 h-3 bg-accent rounded-full mr-2"></div>
                     <span className="text-sm">Experimental Arm</span>
                   </div>
                   <div className="flex items-center">
@@ -316,7 +316,7 @@ export function TrialDesign({ trialData, onBack, onContinue }: TrialDesignProps)
               <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-300"></div>
               <div className="space-y-6">
                 <div className="flex items-center">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium z-10">
+                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white text-sm font-medium z-10">
                     1
                   </div>
                   <div className="ml-4">
@@ -326,7 +326,7 @@ export function TrialDesign({ trialData, onBack, onContinue }: TrialDesignProps)
                 </div>
 
                 <div className="flex items-center">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium z-10">
+                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white text-sm font-medium z-10">
                     2
                   </div>
                   <div className="ml-4">
@@ -336,7 +336,7 @@ export function TrialDesign({ trialData, onBack, onContinue }: TrialDesignProps)
                 </div>
 
                 <div className="flex items-center">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium z-10">
+                  <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white text-sm font-medium z-10">
                     3
                   </div>
                   <div className="ml-4">
@@ -370,7 +370,7 @@ export function TrialDesign({ trialData, onBack, onContinue }: TrialDesignProps)
         </button>
         <button
           onClick={onContinue}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="px-6 py-2 bg-accent text-white rounded-lg bg-accent-hover"
         >
           Continue to Patient Management
         </button>

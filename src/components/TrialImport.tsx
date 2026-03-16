@@ -253,7 +253,7 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
             <button
               onClick={() => handleFetchNctData()}
               disabled={isFetching || !nctInput.trim()}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-accent text-white py-2 px-4 rounded-lg bg-accent-hover disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
             >
               {isFetching ? "Fetching..." : "Fetch Trial Data"}
             </button>
@@ -277,7 +277,7 @@ export function TrialImport({ onTrialDataFetched, onBack }: TrialImportProps) {
             {uploadProgress !== null && (
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div
-                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                  className="bg-accent h-2.5 rounded-full transition-all duration-300"
                   style={{ width: `${uploadProgress}%` }}
                 ></div>
               </div>

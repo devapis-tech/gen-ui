@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Calendar, Shield, Activity, Users, Plus } from 'lucide-react';
 import ScheduledVisitsTab from '@/components/visits/ScheduledVisitsTab';
 import SafetyReportingTab from '@/components/visits/SafetyReportingTab';
@@ -20,8 +21,28 @@ const mockPatients: Patient[] = [
 ];
 
 export default function VisitSchedulePage() {
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(mockPatients[0]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [activeTab, setActiveTab] = useState<'scheduled' | 'safety' | 'monitor'>('scheduled');
+
+  // Initialize patient from URL on mount
+  useEffect(() => {
+    const patientId = searchParams.get('patient');
+    if (patientId) {
+      const patient = mockPatients.find(p => p.id === patientId);
+      setSelectedPatient(patient || mockPatients[0]);
+    } else {
+      setSelectedPatient(mockPatients[0]);
+    }
+  }, [searchParams]);
+
+  const handlePatientChange = (patientId: string) => {
+    const patient = mockPatients.find(p => p.id === patientId);
+    setSelectedPatient(patient || null);
+    // Update URL with patient parameter
+    router.push(`/visit-schedule?patient=${patientId}`);
+  };
 
   const tabs = [
     { id: 'scheduled' as const, label: 'eCRF / CFR Schedule', icon: Calendar },
@@ -45,10 +66,7 @@ export default function VisitSchedulePage() {
               </div>
               <select
                 value={selectedPatient?.id || ''}
-                onChange={(e) => {
-                  const patient = mockPatients.find(p => p.id === e.target.value);
-                  setSelectedPatient(patient || null);
-                }}
+                onChange={(e) => handlePatientChange(e.target.value)}
                 className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 {mockPatients.map((patient) => (

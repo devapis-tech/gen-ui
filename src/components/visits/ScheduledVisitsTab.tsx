@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Calendar, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Calendar, CheckCircle, Clock, AlertCircle, ExternalLink } from 'lucide-react';
 import { useCopilotAction } from "@copilotkit/react-core";
 import VisitFormModal from './VisitFormModal';
 
@@ -38,21 +38,21 @@ const mockVisits: ScheduledVisit[] = [
   {
     id: '3',
     visitName: 'Week 4 Visit',
-    scheduledDate: '2024-02-19',
+    scheduledDate: new Date().toISOString().split('T')[0], // Today
     status: 'in-progress',
     ecrfStatus: 'in-progress'
   },
   {
     id: '4',
     visitName: 'Week 8 Visit',
-    scheduledDate: '2024-03-18',
+    scheduledDate: '2024-03-18', // Past date (overdue)
     status: 'scheduled',
     ecrfStatus: 'not-started'
   },
   {
     id: '5',
     visitName: 'Week 12 Visit',
-    scheduledDate: '2024-04-15',
+    scheduledDate: '2025-04-15', // Future date
     status: 'scheduled',
     ecrfStatus: 'not-started'
   }
@@ -109,19 +109,66 @@ export default function ScheduledVisitsTab({ patientId }: ScheduledVisitsTabProp
     );
   };
 
-  const getEcrfStatusBadge = (status: ScheduledVisit['ecrfStatus']) => {
+  const getEcrfStatusBadge = (status: ScheduledVisit['ecrfStatus'], visitId: string, patientId: string) => {
     const styles = {
-      'approved': 'bg-green-100 text-green-800',
-      'submitted': 'bg-blue-100 text-blue-800',
-      'in-progress': 'bg-yellow-100 text-yellow-800',
-      'not-started': 'bg-gray-100 text-gray-800'
+      'approved': 'bg-green-100 text-green-800 hover:bg-green-200',
+      'submitted': 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+      'in-progress': 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
+      'not-started': 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+    };
+
+    const handleClick = () => {
+      // Navigate to forms page with patient and visit context
+      window.location.href = `/forms?patient=${patientId}&visit=${visitId}`;
     };
 
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[status]}`}>
-        {status.replace('-', ' ')}
-      </span>
+      <button
+        onClick={handleClick}
+        className={`px-2 py-1 text-xs font-medium rounded-full transition-colors cursor-pointer underline decoration-dotted underline-offset-2 ${styles[status]}`}
+        title={`Click to open form for ${status.replace('-', ' ')}`}
+      >
+        <span className="flex items-center space-x-1">
+          <span>{status.replace('-', ' ')}</span>
+          <ExternalLink className="w-3 h-3" />
+        </span>
+      </button>
     );
+  };
+
+  const getRowStyle = (visit: ScheduledVisit) => {
+    const today = new Date();
+    const scheduledDate = new Date(visit.scheduledDate);
+    const isOverdue = scheduledDate < today && visit.status !== 'completed';
+    
+    const baseStyles = 'hover:bg-gray-50 transition-colors';
+    
+    if (isOverdue) {
+      return `${baseStyles} bg-red-50 border-l-4 border-red-400`;
+    }
+    
+    switch (visit.status) {
+      case 'completed':
+        return `${baseStyles} bg-green-50`;
+      case 'in-progress':
+        return `${baseStyles} bg-blue-50`;
+      case 'missed':
+        return `${baseStyles} bg-red-50`;
+      default:
+        return baseStyles;
+    }
+  };
+
+  const isVisitToday = (visit: ScheduledVisit) => {
+    const today = new Date();
+    const visitDate = new Date(visit.scheduledDate);
+    return visitDate.toDateString() === today.toDateString();
+  };
+
+  const isOverdue = (visit: ScheduledVisit) => {
+    const today = new Date();
+    const scheduledDate = new Date(visit.scheduledDate);
+    return scheduledDate < today && visit.status !== 'completed';
   };
 
   const handleAddVisit = (visitData: Partial<ScheduledVisit>) => {
@@ -176,7 +223,7 @@ export default function ScheduledVisitsTab({ patientId }: ScheduledVisitsTabProp
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {visits.map((visit: ScheduledVisit) => (
-                <tr key={visit.id} className="hover:bg-gray-50">
+                <tr key={visit.id} className={getRowStyle(visit)}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-2">
                       {getStatusIcon(visit.status)}
@@ -193,7 +240,20 @@ export default function ScheduledVisitsTab({ patientId }: ScheduledVisitsTabProp
                     {getStatusBadge(visit.status)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {getEcrfStatusBadge(visit.ecrfStatus)}
+                    <div className="flex items-center space-x-2">
+                      {getEcrfStatusBadge(visit.ecrfStatus, visit.id, patientId)}
+                      {isVisitToday(visit) && (
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                          TODAY
+                        </span>
+                      )}
+                      {isOverdue(visit) && (
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 flex items-center space-x-1">
+                          <AlertCircle className="w-3 h-3" />
+                          <span>OVERDUE</span>
+                        </span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

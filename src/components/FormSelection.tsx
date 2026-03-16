@@ -129,7 +129,7 @@ export function FormSelection({ onContinue, onBack }: FormSelectionProps) {
         <button
           onClick={handleContinue}
           disabled={selectedForms.length === 0}
-          className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="bg-accent text-white py-2 px-6 rounded-lg bg-accent-hover disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
         >
           Continue to Workspace
         </button>

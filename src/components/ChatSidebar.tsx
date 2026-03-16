@@ -170,7 +170,7 @@ export function ChatSidebar() {
               <div className="flex space-x-2">
                 <button
                   onClick={handleNewSession}
-                  className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                  className="px-2 py-1 text-xs bg-accent text-white rounded bg-accent-hover"
                 >
                   New Chat
                 </button>
@@ -212,7 +212,7 @@ export function ChatSidebar() {
               >
                 <div
                   className={`inline-block max-w-[80%] p-3 rounded-lg ${message.role === "user"
-                      ? "bg-blue-500 text-white"
+                      ? "bg-accent text-white"
                       : "bg-gray-100 text-gray-900"
                     }`}
                 >

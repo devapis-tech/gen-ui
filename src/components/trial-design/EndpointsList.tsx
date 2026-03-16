@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTrialDesignStore } from "@/lib/stores/trialDesignStore";
 
 export function EndpointsList() {
   const { trialData, addEndpoint, updateEndpoint, removeEndpoint } = useTrialDesignStore();
   const [isEditing, setIsEditing] = useState(false);
   const [filter, setFilter] = useState<'all' | 'primary' | 'secondary'>('all');
+  const [liveMetrics, setLiveMetrics] = useState<{[key: string]: any}>({});
 
   const mockEndpoints = [
     {
@@ -75,6 +76,36 @@ export function EndpointsList() {
 
   const primaryEndpoints = currentEndpoints.filter(e => e.type === 'primary');
   const secondaryEndpoints = currentEndpoints.filter(e => e.type === 'secondary');
+
+  // Fetch live metrics from analytics
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const response = await fetch('/api/analytics/endpoints');
+        if (response.ok) {
+          const metrics = await response.json();
+          setLiveMetrics(metrics);
+        } else {
+          // Fallback to mock metrics
+          setLiveMetrics({
+            "1": { currentRate: "12.5%", patients: 12, total: 96, trend: "+2.3%" },
+            "2": { currentRate: "8.7%", patients: 8, total: 92, trend: "+1.1%" },
+            "3": { currentRate: "23.4%", patients: 22, total: 94, trend: "+3.2%" }
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch metrics:', error);
+        // Fallback to mock metrics
+        setLiveMetrics({
+          "1": { currentRate: "12.5%", patients: 12, total: 96, trend: "+2.3%" },
+          "2": { currentRate: "8.7%", patients: 8, total: 92, trend: "+1.1%" },
+          "3": { currentRate: "23.4%", patients: 22, total: 94, trend: "+3.2%" }
+        });
+      }
+    };
+
+    fetchMetrics();
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
@@ -205,6 +236,30 @@ export function EndpointsList() {
                       )}
                     </div>
                   </div>
+
+                  {/* Live Metrics */}
+                  {!isEditing && liveMetrics[endpoint.id] && (
+                    <div className="mt-4 p-3 bg-white border border-green-200 rounded-lg">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          <span className="text-sm font-medium text-gray-600">Current Rate:</span>
+                          <span className="ml-2 text-lg font-bold text-green-600">{liveMetrics[endpoint.id].currentRate}</span>
+                          <span className={`ml-2 text-xs font-medium ${liveMetrics[endpoint.id].trend.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                            {liveMetrics[endpoint.id].trend}
+                          </span>
+                        </div>
+                        <a
+                          href="/chat-with-data?endpoint=primary"
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
+                          View in Analytics →
+                        </a>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500">
+                        {liveMetrics[endpoint.id].patients} of {liveMetrics[endpoint.id].total} patients
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -291,6 +346,30 @@ export function EndpointsList() {
                       )}
                     </div>
                   </div>
+
+                  {/* Live Metrics */}
+                  {!isEditing && liveMetrics[endpoint.id] && (
+                    <div className="mt-4 p-3 bg-white border border-purple-200 rounded-lg">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          <span className="text-sm font-medium text-gray-600">Current Rate:</span>
+                          <span className="ml-2 text-lg font-bold text-purple-600">{liveMetrics[endpoint.id].currentRate}</span>
+                          <span className={`ml-2 text-xs font-medium ${liveMetrics[endpoint.id].trend.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                            {liveMetrics[endpoint.id].trend}
+                          </span>
+                        </div>
+                        <a
+                          href="/chat-with-data?endpoint=secondary"
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
+                          View in Analytics →
+                        </a>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500">
+                        {liveMetrics[endpoint.id].patients} of {liveMetrics[endpoint.id].total} patients
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

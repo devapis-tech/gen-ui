@@ -1,10 +1,16 @@
 "use client";
 
 import { usePatient } from "@/lib/hooks/usePatient";
-import { Users, Activity, AlertTriangle, CheckCircle, TrendingUp, TrendingDown, Clock } from "lucide-react";
+import { Users, Activity, AlertTriangle, CheckCircle, TrendingUp, TrendingDown, Clock, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export function PatientDataDashboard() {
+interface PatientDataDashboardProps {
+    dateRange?: string;
+}
+
+export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardProps) {
     const { patients } = usePatient();
+    const router = useRouter();
 
     const totalPatients = patients.length;
     const enrolledCount = patients.filter(p => p.status === "ENROLLED").length;
@@ -98,21 +104,25 @@ export function PatientDataDashboard() {
                     <div className="flex-1 p-6 flex items-center justify-center min-h-[300px]">
                         {/* Mock Chart Visualization */}
                         <div className="w-full h-full flex items-end justify-between space-x-2 px-4">
-                            {[45, 60, 55, 75, 90, 85, 100, 110, 95, 120, 105, 130].map((val, i) => (
-                                <div key={i} className="flex-1 flex flex-col items-center group">
-                                    <div
-                                        className="w-full bg-blue-500/80 hover:bg-blue-600 transition-colors rounded-t-sm relative group"
-                                        style={{ height: `${val * 1.5}px` }}
-                                    >
-                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                            {val}
+                            {[45, 60, 55, 75, 90, 85, 100, 110, 95, 120, 105, 130].map((val, i) => {
+                                const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i];
+                                return (
+                                    <div key={i} className="flex-1 flex flex-col items-center group">
+                                        <div
+                                            className="w-full bg-accent/80 hover:bg-accent transition-all rounded-t-sm relative group cursor-pointer hover:scale-105"
+                                            style={{ height: `${val * 1.5}px` }}
+                                            onClick={() => router.push(`/patients?enrolled_month=${month}`)}
+                                        >
+                                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                                {val} patients • {month}
+                                            </div>
                                         </div>
+                                        <span className="text-[10px] text-gray-400 mt-2 font-medium">
+                                            {['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][i]}
+                                        </span>
                                     </div>
-                                    <span className="text-[10px] text-gray-400 mt-2 font-medium">
-                                        {['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][i]}
-                                    </span>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -125,17 +135,46 @@ export function PatientDataDashboard() {
                         </h3>
                     </div>
                     <div className="flex-1 p-6 flex flex-col justify-center items-center">
-                        <div className="relative w-40 h-40 rounded-full border-[12px] border-blue-500 flex items-center justify-center">
-                            <div className="absolute inset-0 rounded-full border-[12px] border-green-400 border-t-transparent border-r-transparent -rotate-45"></div>
-                            <div className="absolute inset-0 rounded-full border-[12px] border-purple-400 border-t-transparent border-l-transparent border-b-transparent rotate-90"></div>
-                            <div className="text-center">
+                        <div className="relative w-40 h-40">
+                            {/* Clickable donut segments */}
+                            <div 
+                                className="absolute inset-0 rounded-full border-[12px] border-blue-500 cursor-pointer hover:opacity-80 transition-opacity group"
+                                onClick={() => router.push('/patients?cohort=1')}
+                            >
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="bg-gray-900 text-white text-[10px] py-1 px-2 rounded whitespace-nowrap">
+                                        Cohort 1 (45%)
+                                    </div>
+                                </div>
+                            </div>
+                            <div 
+                                className="absolute inset-0 rounded-full border-[12px] border-green-400 border-t-transparent border-r-transparent -rotate-45 cursor-pointer hover:opacity-80 transition-opacity group"
+                                onClick={() => router.push('/patients?cohort=2')}
+                            >
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="bg-gray-900 text-white text-[10px] py-1 px-2 rounded whitespace-nowrap">
+                                        Cohort 2 (32%)
+                                    </div>
+                                </div>
+                            </div>
+                            <div 
+                                className="absolute inset-0 rounded-full border-[12px] border-purple-400 border-t-transparent border-l-transparent border-b-transparent rotate-90 cursor-pointer hover:opacity-80 transition-opacity group"
+                                onClick={() => router.push('/patients?cohort=3')}
+                            >
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="bg-gray-900 text-white text-[10px] py-1 px-2 rounded whitespace-nowrap">
+                                        Cohort 3 (23%)
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <p className="text-2xl font-bold text-gray-900">3</p>
                                 <p className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter text-center leading-none">Cohorts</p>
                             </div>
                         </div>
                         <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-2">
                             <div className="flex items-center space-x-2">
-                                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                                <div className="w-2 h-2 rounded-full bg-accent"></div>
                                 <span className="text-xs text-gray-600">Cohort 1 (45%)</span>
                             </div>
                             <div className="flex items-center space-x-2">
@@ -160,7 +199,11 @@ export function PatientDataDashboard() {
                     </div>
                     <div className="divide-y divide-gray-100">
                         {patients.flatMap(p => p.adverseEvents?.map(ae => ({ ...ae, patientId: p.subjectId })) || []).slice(0, 4).map((ae, i) => (
-                            <div key={i} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div 
+                                key={i} 
+                                className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer group"
+                                onClick={() => router.push(`/adverse-events?patient=${ae.patientId}&event=${ae.eventName}`)}
+                            >
                                 <div className="flex items-center space-x-4">
                                     <div className={`p-2 rounded-lg ${ae.serious ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'}`}>
                                         <AlertTriangle size={16} />
@@ -170,7 +213,10 @@ export function PatientDataDashboard() {
                                         <p className="text-xs text-gray-500">{ae.patientId} • {ae.severity}</p>
                                     </div>
                                 </div>
-                                <span className="text-[10px] font-mono text-gray-400">{new Date(ae.onset).toLocaleDateString()}</span>
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-[10px] font-mono text-gray-400">{new Date(ae.onset).toLocaleDateString()}</span>
+                                    <ArrowRight size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
                             </div>
                         ))}
                         {totalAEs === 0 && (
@@ -191,7 +237,11 @@ export function PatientDataDashboard() {
                     </div>
                     <div className="divide-y divide-gray-100">
                         {patients.map(p => ({ subjectId: p.subjectId, nextVisit: p.nextVisit, site: p.site })).filter(p => p.nextVisit !== 'N/A').slice(0, 4).map((v, i) => (
-                            <div key={i} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div 
+                                key={i} 
+                                className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer group"
+                                onClick={() => router.push(`/visit-schedule?patient=${v.subjectId}`)}
+                            >
                                 <div className="flex items-center space-x-4">
                                     <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
                                         <Clock size={16} />
@@ -201,8 +251,9 @@ export function PatientDataDashboard() {
                                         <p className="text-xs text-gray-500">{v.nextVisit}</p>
                                     </div>
                                 </div>
-                                <div className="text-right">
+                                <div className="flex items-center space-x-2">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase">{v.site.split('-')[0].trim()}</p>
+                                    <ArrowRight size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
                             </div>
                         ))}

@@ -4,11 +4,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --accent: #800080;
+  --accent-hover: #660666;
+  --accent-light: #993299;
+  --accent-dark: #660066;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-light: var(--accent-light);
+  --color-accent-dark: var(--accent-dark);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -17,6 +25,10 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --accent: #993299;
+    --accent-hover: #b366b3;
+    --accent-light: #800080;
+    --accent-dark: #660066;
   }
 }
 
@@ -47,4 +59,33 @@ span[class*="PoweredBy"] {
 .copilotKit-chat p:last-child,
 [class*="copilot-kit"] p:last-child {
   opacity: 0 !important;
+}
+
+/* Purple accent button utility classes */
+.bg-accent {
+  background-color: var(--accent);
+}
+
+.bg-accent-hover:hover {
+  background-color: var(--accent-hover);
+}
+
+.bg-accent-light {
+  background-color: var(--accent-light);
+}
+
+.bg-accent-dark {
+  background-color: var(--accent-dark);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.border-accent {
+  border-color: var(--accent);
+}
+
+.border-accent-hover:hover {
+  border-color: var(--accent-hover);
 }

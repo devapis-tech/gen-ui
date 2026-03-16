@@ -156,7 +156,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
           <p className="text-gray-500">No trial data available. Please import trial data first.</p>
           <button
             onClick={onBack}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="mt-4 px-4 py-2 bg-accent text-white rounded-lg bg-accent-hover"
           >
             Go Back
           </button>
@@ -194,7 +194,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
               onClick={() => setActiveTab("ECFR")}
               className={`py-3 px-6 border-b-2 font-medium text-sm ${
                 activeTab === "ECFR"
-                  ? "border-blue-500 text-blue-600"
+                  ? "border-accent text-accent"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
@@ -204,7 +204,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
               onClick={() => setActiveTab("SAFETY")}
               className={`py-3 px-6 border-b-2 font-medium text-sm ${
                 activeTab === "SAFETY"
-                  ? "border-blue-500 text-blue-600"
+                  ? "border-accent text-accent"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
@@ -214,7 +214,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
               onClick={() => setActiveTab("LIVE_MONITOR")}
               className={`py-3 px-6 border-b-2 font-medium text-sm ${
                 activeTab === "LIVE_MONITOR"
-                  ? "border-blue-500 text-blue-600"
+                  ? "border-accent text-accent"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
@@ -229,7 +229,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">eCFR/CFR Visit Schedule</h3>
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm">
+                <button className="px-4 py-2 bg-accent text-white rounded-lg bg-accent-hover text-sm">
                   Add Patient
                 </button>
               </div>
@@ -238,7 +238,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-medium text-gray-900 mb-2">Total Enrolled</h4>
-                  <p className="text-2xl font-bold text-blue-600">{patients.length}</p>
+                  <p className="text-2xl font-bold text-accent">{patients.length}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-medium text-gray-900 mb-2">Active Patients</h4>
@@ -524,7 +524,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <div className="w-2 h-2 bg-accent rounded-full mt-2"></div>
                     <div>
                       <p className="text-sm text-gray-900">
                         <span className="font-medium">SUBJ-002</span> enrolled in study
@@ -616,7 +616,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
         </button>
         <button
           onClick={onContinue}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="px-6 py-2 bg-accent text-white rounded-lg bg-accent-hover"
         >
           Continue to Review
         </button>

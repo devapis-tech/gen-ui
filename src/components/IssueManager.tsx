@@ -9,10 +9,20 @@ interface IssueReport {
   title: string;
   description: string;
   severity: "low" | "medium" | "high" | "critical";
-  category: "bug" | "feature_request" | "ui_issue" | "performance" | "other";
+  category: "bug" | "feature_request" | "ui_issue" | "performance" | "other" | "data_query" | "protocol_deviation" | "sae_escalation";
   reporter: string;
   timestamp: Date;
   status: "open" | "in_progress" | "resolved";
+  linkedTo?: {
+    patientId?: string;
+    formId?: string;
+    visitId?: string;
+    aeId?: string;
+    documentId?: string;
+  };
+  assignee?: string;
+  dueDate?: Date;
+  issueType?: "data_query" | "protocol_deviation" | "system_bug" | "feature_request" | "sae_escalation";
 }
 
 export function IssueManager() {
@@ -160,9 +170,12 @@ export function IssueManager() {
       feature_request: HelpCircle,
       ui_issue: AlertCircle,
       performance: AlertTriangle,
-      other: AlertCircle
+      other: AlertCircle,
+      data_query: AlertCircle,
+      protocol_deviation: AlertTriangle,
+      sae_escalation: AlertTriangle
     };
-    return icons[category];
+    return icons[category] || AlertCircle;
   };
 
   // Filter issues
@@ -314,6 +327,9 @@ export function IssueManager() {
                 <option value="feature_request">Feature Request</option>
                 <option value="ui_issue">UI Issue</option>
                 <option value="performance">Performance</option>
+                <option value="data_query">Data Query</option>
+                <option value="protocol_deviation">Protocol Deviation</option>
+                <option value="sae_escalation">SAE Escalation</option>
                 <option value="other">Other</option>
               </select>
             </div>
@@ -365,9 +381,45 @@ export function IssueManager() {
                         </span>
                       </div>
                       <p className="text-gray-600 mb-3">{issue.description}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <span>Category: {issue.category.replace("_", " ")}</span>
-                        {issue.reporter && <span>Reporter: {issue.reporter}</span>}
+                      
+                      {/* Linked Entities */}
+                      {issue.linkedTo && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {issue.linkedTo.patientId && (
+                            <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                              Patient: {issue.linkedTo.patientId}
+                            </span>
+                          )}
+                          {issue.linkedTo.formId && (
+                            <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                              Form: {issue.linkedTo.formId}
+                            </span>
+                          )}
+                          {issue.linkedTo.visitId && (
+                            <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+                              Visit: {issue.linkedTo.visitId}
+                            </span>
+                          )}
+                          {issue.linkedTo.aeId && (
+                            <span className="inline-flex items-center px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+                              AE: {issue.linkedTo.aeId}
+                            </span>
+                          )}
+                          {issue.linkedTo.documentId && (
+                            <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+                              Document: {issue.linkedTo.documentId}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between text-sm text-gray-500">
+                        <div className="flex items-center space-x-4">
+                          <span>Category: {issue.category.replace("_", " ")}</span>
+                          {issue.reporter && <span>Reporter: {issue.reporter}</span>}
+                          {issue.assignee && <span>Assignee: {issue.assignee}</span>}
+                          {issue.dueDate && <span>Due: {issue.dueDate.toLocaleDateString()}</span>}
+                        </div>
                         <span>Created: {issue.timestamp.toLocaleDateString()}</span>
                       </div>
                     </div>

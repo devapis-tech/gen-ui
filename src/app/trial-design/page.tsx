@@ -3,6 +3,7 @@
 import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core";
 import { useState, useEffect } from "react";
 import { useTrialDesignStore } from "@/lib/stores/trialDesignStore";
+import { useUserRole } from "@/contexts/UserRoleContext";
 import { TrialPhaseCard } from "@/components/trial-design/TrialPhaseCard";
 import { EligibilityCriteria } from "@/components/trial-design/EligibilityCriteria";
 import { VisitScheduleMatrix } from "@/components/trial-design/VisitScheduleMatrix";
@@ -11,7 +12,10 @@ import { TrialDesignData } from "@/lib/stores/trialDesignStore";
 
 export default function TrialDesignPage() {
   const { trialData, updateTrialData, setTrialData } = useTrialDesignStore();
+  const { userRole } = useUserRole();
   const [activeTab, setActiveTab] = useState("overview");
+  const [enrolledPatients, setEnrolledPatients] = useState(100); // Mock enrolled patients count
+  const [protocolDocuments, setProtocolDocuments] = useState<any[]>([]);
 
   // Add mock data for testing
   useEffect(() => {
@@ -27,7 +31,7 @@ export default function TrialDesignPage() {
         enrollmentCount: "1431",
         startDate: "2026-04-01",
         completionDate: "2031-07-31",
-        overallStatus: "NOT_YET_RECRUITING",
+        overallStatus: enrolledPatients > 0 ? "RECRUITING" : "NOT_YET_RECRUITING",
         piName: "Dr. John Smith",
         piAffiliation: "Eli Lilly and Company",
         indNumber: "IND168420",
@@ -91,7 +95,66 @@ export default function TrialDesignPage() {
       };
       setTrialData(mockTrialData);
     }
-  }, [trialData, setTrialData]);
+  }, [trialData, setTrialData, enrolledPatients]);
+
+  // Fetch protocol documents from Documents Repository
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        const response = await fetch(`/api/documents?trial=${trialData?.nctId}`);
+        if (response.ok) {
+          const docs = await response.json();
+          setProtocolDocuments(docs);
+        } else {
+          // Fallback to mock documents if API fails
+          setProtocolDocuments([
+            {
+              id: "DOC-001",
+              name: "Clinical Trial Protocol v2.1.pdf",
+              type: "Protocol",
+              url: "/documents/DOC-001"
+            },
+            {
+              id: "DOC-002",
+              name: "Investigator Brochure.pdf",
+              type: "IB",
+              url: "/documents/DOC-002"
+            },
+            {
+              id: "DOC-003",
+              name: "Informed Consent Form - Site A.docx",
+              type: "ICF",
+              url: "/documents/DOC-003"
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch documents:', error);
+        // Fallback to mock documents
+        setProtocolDocuments([
+          {
+            id: "DOC-001",
+            name: "Clinical Trial Protocol v2.1.pdf",
+            type: "Protocol",
+            url: "/documents/DOC-001"
+          },
+          {
+            id: "DOC-002",
+            name: "Investigator Brochure.pdf",
+            type: "IB",
+            url: "/documents/DOC-002"
+          }
+        ]);
+      }
+    };
+
+    if (trialData?.nctId) {
+      fetchDocuments();
+    }
+  }, [trialData?.nctId]);
+
+  // Role-based visibility for sensitive fields
+  const canViewSensitive = userRole?.title === "ADMIN" || userRole?.badge === "INTERNAL TEAM";
 
   // Make trial data readable by CopilotKit
   useCopilotReadable({
@@ -153,12 +216,32 @@ export default function TrialDesignPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               {trialData.protocolTitle}
             </h2>
-            <p className="text-gray-600 mb-4">NCT ID: {trialData.nctId}</p>
+            <p className="text-gray-600 mb-4">
+              NCT ID: <a 
+                href={`https://clinicaltrials.gov/study/${trialData.nctId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                {trialData.nctId}
+              </a>
+            </p>
+
+            {/* View Enrolled Patients Button */}
+            <div className="mb-4">
+              <a
+                href={`/patients?trial=${trialData.nctId}`}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+              >
+                <span className="mr-2">👥</span>
+                View {enrolledPatients} Enrolled Patients →
+              </a>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Sponsor</p>
-                <p className="font-medium">{trialData.sponsorName}</p>
+                <p className="font-medium">{canViewSensitive ? trialData.sponsorName : "••••••••••"}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Phase</p>
@@ -178,6 +261,20 @@ export default function TrialDesignPage() {
                   }`}>
                   {trialData.overallStatus}
                 </span>
+              </div>
+            </div>
+
+            {/* Trial Progress Bar */}
+            <div className="mt-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-500">Trial Progress</span>
+                <span className="text-sm font-medium">{enrolledPatients}/{trialData.enrollmentCount} ({Math.round((enrolledPatients / parseInt(trialData.enrollmentCount)) * 100)}%)</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min((enrolledPatients / parseInt(trialData.enrollmentCount)) * 100, 100)}%` }}
+                />
               </div>
             </div>
           </div>
@@ -223,11 +320,11 @@ export default function TrialDesignPage() {
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-sm text-gray-500">Start Date:</dt>
-                    <dd className="text-sm font-medium">{trialData.startDate}</dd>
+                    <dd className="text-sm font-medium">{canViewSensitive ? trialData.startDate : "••••••••"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-sm text-gray-500">Completion:</dt>
-                    <dd className="text-sm font-medium">{trialData.completionDate}</dd>
+                    <dd className="text-sm font-medium">{canViewSensitive ? trialData.completionDate : "••••••••"}</dd>
                   </div>
                 </dl>
               </div>
@@ -237,16 +334,16 @@ export default function TrialDesignPage() {
                 <dl className="space-y-2">
                   <div>
                     <dt className="text-sm text-gray-500">Principal Investigator:</dt>
-                    <dd className="text-sm font-medium">{trialData.piName}</dd>
+                    <dd className="text-sm font-medium">{canViewSensitive ? trialData.piName : "••••••••••"}</dd>
                   </div>
                   <div>
                     <dt className="text-sm text-gray-500">Affiliation:</dt>
-                    <dd className="text-sm font-medium">{trialData.piAffiliation}</dd>
+                    <dd className="text-sm font-medium">{canViewSensitive ? trialData.piAffiliation : "••••••••••"}</dd>
                   </div>
                   {trialData.indNumber && (
                     <div>
                       <dt className="text-sm text-gray-500">IND Number:</dt>
-                      <dd className="text-sm font-medium">{trialData.indNumber}</dd>
+                      <dd className="text-sm font-medium">{canViewSensitive ? trialData.indNumber : "••••••••"}</dd>
                     </div>
                   )}
                 </dl>
@@ -275,9 +372,9 @@ export default function TrialDesignPage() {
         {activeTab === "documents" && (
           <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Protocol Documents</h3>
-            {trialData.protocolDocuments && trialData.protocolDocuments.length > 0 ? (
+            {protocolDocuments && protocolDocuments.length > 0 ? (
               <div className="space-y-3">
-                {trialData.protocolDocuments.map((doc) => (
+                {protocolDocuments.map((doc) => (
                   <div key={doc.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                     <div className="flex items-center">
                       <span className="text-2xl mr-3">📄</span>
@@ -298,7 +395,15 @@ export default function TrialDesignPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">No protocol documents uploaded yet.</p>
+              <div className="text-center py-8">
+                <p className="text-gray-500 mb-4">No protocol documents uploaded yet.</p>
+                <a
+                  href="/documents"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                >
+                  Go to Documents Repository →
+                </a>
+              </div>
             )}
           </div>
         )}
