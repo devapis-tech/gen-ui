@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { UserRoleProvider } from "@/contexts/UserRoleContext";
+import { ChatSidebarProvider } from "@/contexts/ChatSidebarContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { CopilotKit } from "@copilotkit/react-core";
 
@@ -32,9 +33,11 @@ export default function RootLayout({
       >
         <CopilotKit runtimeUrl="/api/copilotkit">
           <UserRoleProvider>
-            <AppLayout>
-              {children}
-            </AppLayout>
+            <ChatSidebarProvider>
+              <AppLayout>
+                {children}
+              </AppLayout>
+            </ChatSidebarProvider>
           </UserRoleProvider>
         </CopilotKit>
       </body>

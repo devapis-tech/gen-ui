@@ -1,6 +1,7 @@
 "use client";
 
 import { usePatient } from "@/lib/hooks/usePatient";
+import { useCopilotReadable } from "@copilotkit/react-core";
 import { Users, Activity, AlertTriangle, CheckCircle, TrendingUp, TrendingDown, Clock, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +12,24 @@ interface PatientDataDashboardProps {
 export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardProps) {
     const { patients } = usePatient();
     const router = useRouter();
+
+    // Make live patient data available to the AI assistant
+    useCopilotReadable({
+        description: "Live list of all patients in the clinical trial",
+        value: patients.map(p => {
+            const completed = p.visitHistory?.filter(v => v.status === "COMPLETED").length || 0;
+            const total = p.visitHistory?.length || 1;
+            const compliance = `${Math.round((completed / total) * 100)}%`;
+            return {
+                id: p.subjectId,
+                status: p.status,
+                site: p.site,
+                compliance,
+                nextVisit: p.nextVisit,
+                adverseEventsCount: p.adverseEvents?.length || 0
+            };
+        })
+    });
 
     const totalPatients = patients.length;
     const enrolledCount = patients.filter(p => p.status === "ENROLLED").length;
@@ -137,7 +156,7 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
                     <div className="flex-1 p-6 flex flex-col justify-center items-center">
                         <div className="relative w-40 h-40">
                             {/* Clickable donut segments */}
-                            <div 
+                            <div
                                 className="absolute inset-0 rounded-full border-[12px] border-blue-500 cursor-pointer hover:opacity-80 transition-opacity group"
                                 onClick={() => router.push('/patients?cohort=1')}
                             >
@@ -147,7 +166,7 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
                                     </div>
                                 </div>
                             </div>
-                            <div 
+                            <div
                                 className="absolute inset-0 rounded-full border-[12px] border-green-400 border-t-transparent border-r-transparent -rotate-45 cursor-pointer hover:opacity-80 transition-opacity group"
                                 onClick={() => router.push('/patients?cohort=2')}
                             >
@@ -157,7 +176,7 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
                                     </div>
                                 </div>
                             </div>
-                            <div 
+                            <div
                                 className="absolute inset-0 rounded-full border-[12px] border-purple-400 border-t-transparent border-l-transparent border-b-transparent rotate-90 cursor-pointer hover:opacity-80 transition-opacity group"
                                 onClick={() => router.push('/patients?cohort=3')}
                             >
@@ -199,8 +218,8 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
                     </div>
                     <div className="divide-y divide-gray-100">
                         {patients.flatMap(p => p.adverseEvents?.map(ae => ({ ...ae, patientId: p.subjectId })) || []).slice(0, 4).map((ae, i) => (
-                            <div 
-                                key={i} 
+                            <div
+                                key={i}
                                 className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer group"
                                 onClick={() => router.push(`/adverse-events?patient=${ae.patientId}&event=${ae.eventName}`)}
                             >
@@ -237,8 +256,8 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
                     </div>
                     <div className="divide-y divide-gray-100">
                         {patients.map(p => ({ subjectId: p.subjectId, nextVisit: p.nextVisit, site: p.site })).filter(p => p.nextVisit !== 'N/A').slice(0, 4).map((v, i) => (
-                            <div 
-                                key={i} 
+                            <div
+                                key={i}
                                 className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer group"
                                 onClick={() => router.push(`/visit-schedule?patient=${v.subjectId}`)}
                             >

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useCopilotReadable } from "@copilotkit/react-core";
+import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core";
 import { useUserRole } from "@/contexts/UserRoleContext";
-import { 
-  Users, 
-  CheckCircle, 
-  AlertTriangle, 
+import {
+  Users,
+  CheckCircle,
+  AlertTriangle,
   FileText,
   UserPlus,
   Plus,
@@ -27,7 +27,7 @@ interface KPICardProps {
 function KPICard({ title, value, change, changeType, icon, href }: KPICardProps) {
   const changeColors = {
     increase: "text-green-600",
-    decrease: "text-red-600", 
+    decrease: "text-red-600",
     stable: "text-gray-600"
   };
 
@@ -118,6 +118,127 @@ export function Dashboard() {
     }
   });
 
+  // Action: Search Patients
+  useCopilotAction({
+    name: "searchPatients",
+    description: "Search for patients in the clinical trial",
+    parameters: [
+      {
+        name: "query",
+        type: "string",
+        description: "Search query for patients (name, ID, or status)",
+        required: true,
+      },
+    ],
+    handler: async ({ query }) => {
+      // Return mock search results matching the query
+      const mockPatients = [
+        { id: "EMR-1001", name: "John Doe", status: "Enrolled", compliance: "95%" },
+        { id: "EMR-1002", name: "Jane Smith", status: "Enrolled", compliance: "88%" },
+        { id: "EMR-1015", name: "Robert Brown", status: "Screening", compliance: "N/A" },
+        { id: "EMR-1042", name: "Michael Wilson", status: "Enrolled", compliance: "92%" },
+        { id: "EMR-1088", name: "Sarah Davis", status: "Completed", compliance: "98%" }
+      ];
+
+      const filtered = mockPatients.filter(p =>
+        p.name.toLowerCase().includes(query.toLowerCase()) ||
+        p.id.toLowerCase().includes(query.toLowerCase()) ||
+        p.status.toLowerCase().includes(query.toLowerCase())
+      );
+
+      return {
+        success: true,
+        count: filtered.length,
+        data: filtered
+      };
+    },
+    render: ({ status, result }) => {
+      if (status === "inProgress") return <div className="text-sm text-gray-500 animate-pulse p-4 bg-gray-50 rounded-lg">Searching trial database...</div>;
+      if (status === "complete" && result?.success) {
+        return (
+          <div className="space-y-2 mt-2">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Search Results ({result.count})</p>
+            {result.data.map((patient: any) => (
+              <div key={patient.id} className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm flex justify-between items-center group hover:border-blue-300 transition-colors">
+                <div>
+                  <p className="text-sm font-bold text-gray-900">{patient.name}</p>
+                  <p className="text-[10px] text-gray-500 font-mono">{patient.id}</p>
+                </div>
+                <div className="text-right">
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${patient.status === 'Enrolled' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                    }`}>
+                    {patient.status}
+                  </span>
+                  <p className="text-[10px] text-gray-400 mt-1">Compliance: {patient.compliance}</p>
+                </div>
+              </div>
+            ))}
+            {result.count === 0 && <p className="text-sm text-gray-500 italic">No patients found matching your search.</p>}
+          </div>
+        );
+      }
+      return <></>;
+    },
+  });
+
+  // Action: Get Trial Metrics
+  useCopilotAction({
+    name: "getTrialMetrics",
+    description: "Get real-time clinical trial metrics",
+    parameters: [],
+    handler: async () => {
+      return {
+        success: true,
+        metrics: {
+          totalPatients: trialData.totalPatients,
+          averageCompliance: trialData.compliance,
+          totalAdverseEvents: trialData.activeAEs,
+          severeEvents: trialData.saes
+        }
+      };
+    },
+    render: ({ status, result }) => {
+      if (status === "inProgress") return <div className="text-sm text-gray-500 animate-pulse p-4 bg-gray-50 rounded-lg">Calculating trial metrics...</div>;
+      if (status === "complete" && result?.success) {
+        const { metrics } = result;
+        return (
+          <div className="mt-3 p-4 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl text-white shadow-lg overflow-hidden relative">
+            <div className="absolute -right-4 -bottom-4 opacity-10">
+              <Users size={80} />
+            </div>
+            <p className="text-[10px] font-bold opacity-80 uppercase tracking-[0.2em] mb-3">Live Trial Insights</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-2xl font-black">{metrics.totalPatients}</p>
+                <p className="text-[9px] uppercase tracking-tighter opacity-70">Total Subjects</p>
+              </div>
+              <div>
+                <p className="text-2xl font-black">{metrics.averageCompliance}</p>
+                <p className="text-[9px] uppercase tracking-tighter opacity-70">Avg Compliance</p>
+              </div>
+              <div>
+                <p className="text-2xl font-black text-orange-300">{metrics.totalAdverseEvents}</p>
+                <p className="text-[9px] uppercase tracking-tighter opacity-70">Reported AEs</p>
+              </div>
+              <div>
+                <p className="text-2xl font-black text-red-300">{metrics.severeEvents}</p>
+                <p className="text-[9px] uppercase tracking-tighter opacity-70">Serious AEs</p>
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+              <span className="text-[8px] opacity-60">DATA CURRENT AS OF NOW</span>
+              <div className="flex space-x-1">
+                <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-[8px] font-bold">STABLE</span>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      return <></>;
+    },
+  });
+
   const kpiData = [
     {
       title: "Patients",
@@ -198,7 +319,7 @@ export function Dashboard() {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Multiplier AI</h2>
           <p className="text-gray-600 mb-6">Let's set up your role to get started</p>
-          <button 
+          <button
             onClick={() => setIsFirstTime(false)}
             className="bg-accent text-white px-6 py-3 rounded-lg bg-accent-hover"
           >
@@ -294,9 +415,8 @@ export function Dashboard() {
                     <p className="text-sm text-gray-600">{ae.type}</p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-xs px-2 py-1 rounded ${
-                      ae.severity === "Mild" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
-                    }`}>
+                    <p className={`text-xs px-2 py-1 rounded ${ae.severity === "Mild" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                      }`}>
                       {ae.severity}
                     </p>
                     <p className="text-sm text-gray-500 mt-1">{ae.date}</p>

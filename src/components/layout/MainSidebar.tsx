@@ -45,7 +45,7 @@ export function MainSidebar() {
 
       {/* Sidebar */}
       <div className={`
-        fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white flex flex-col 
+        fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white flex flex-col 
         transform transition-transform duration-300 ease-in-out
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}>
@@ -120,7 +120,7 @@ export function MainSidebar() {
 
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setIsMobileMenuOpen(false)}
         />

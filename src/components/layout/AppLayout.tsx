@@ -3,6 +3,7 @@
 import { ReactNode, Suspense } from "react";
 import { MainSidebar } from "./MainSidebar";
 import dynamic from "next/dynamic";
+import { useChatSidebar } from "@/contexts/ChatSidebarContext";
 
 // Lazy-load the heavy CopilotKit sidebar — do NOT block page navigation
 const PersistentChatSidebar = dynamic(
@@ -33,20 +34,25 @@ function ChatSidebarSkeleton() {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const { isChatOpen } = useChatSidebar();
+
   return (
     <div className="flex min-h-screen bg-gray-50 overflow-hidden">
       {/* Left Column: Main Navigation */}
       <MainSidebar />
 
       {/* Center Column: Main Content (Scrollable) */}
-      <main className="flex-1 flex flex-col overflow-hidden lg:ml-64 lg:mr-[320px] ml-0 mr-0">
+      <main
+        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out lg:ml-64 ${isChatOpen ? 'lg:mr-[320px]' : 'lg:mr-0'
+          } ml-0 mr-0 pt-16 lg:pt-0`}
+      >
         <div className="flex-1 overflow-y-auto w-full">
           {children}
         </div>
       </main>
 
       {/* Right Column: AI Assistant — hidden on mobile, visible on desktop */}
-      <div className="hidden lg:block fixed right-0 top-0 h-full w-[320px] z-40">
+      <div className="hidden lg:block">
         <Suspense fallback={<ChatSidebarSkeleton />}>
           <PersistentChatSidebar />
         </Suspense>
