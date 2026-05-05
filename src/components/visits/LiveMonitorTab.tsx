@@ -10,8 +10,8 @@ interface LiveMonitorTabProps {
   patientId?: string;
 }
 
-// Mock patient data
-const mockPatients = [
+// Mock subject data
+const mockSubjects = [
   { id: 'EMR-1001', name: 'BG', age: 21, trial: 'LY4268989', dose: 'Dose 2', site: 'One of a Kind CRC - Scottsdale', visit: 'Week 4' },
   { id: 'EMR-1002', name: 'JD', age: 35, trial: 'LY4268989', dose: 'Dose 1', site: 'Phoenix Trial Center', visit: 'Week 2' },
   { id: 'EMR-1003', name: 'SM', age: 28, trial: 'LY4268989', dose: 'Dose 3', site: 'Mayo Clinic', visit: 'Week 8' },
@@ -20,11 +20,11 @@ const mockPatients = [
 export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
   const { vitals, alerts, connection, loading, error, acknowledgeAlert, disconnect, reconnect } = useLiveMonitor(patientId);
   
-  // Get current patient info
-  const currentPatient = mockPatients.find(p => p.id === patientId) || mockPatients[0];
+  // Get current subject info
+  const currentSubject = mockSubjects.find(p => p.id === patientId) || mockSubjects[0];
 
   // Handle flag as adverse event
-  const handleFlagAsAE = (patientId: string, vitalType: string, value: string) => {
+  const handleFlagAsAE = (subjectId: string, vitalType: string, value: string) => {
     // Navigate to adverse events page with pre-filled data
     window.location.href = `/adverse-events/new?patient=${patientId}&vital=${vitalType}&value=${encodeURIComponent(value)}&timestamp=${encodeURIComponent(new Date().toISOString())}`;
   };
@@ -64,24 +64,24 @@ export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
             <div className="flex items-center space-x-2">
               <User className="w-5 h-5 text-blue-600" />
               <span className="font-semibold text-blue-900">
-                📡 Monitoring: {currentPatient.id} ({currentPatient.name})
+                📡 Monitoring: {currentSubject.id} ({currentSubject.name})
               </span>
             </div>
             <div className="text-sm text-blue-700">
-              Age: {currentPatient.age} | {currentPatient.trial} {currentPatient.dose}
+              Age: {currentSubject.age} | {currentSubject.trial} {currentSubject.dose}
             </div>
             <div className="flex items-center space-x-1 text-sm text-blue-700">
               <MapPin className="w-4 h-4" />
-              <span>{currentPatient.site}</span>
+              <span>{currentSubject.site}</span>
             </div>
             <div className="flex items-center space-x-1 text-sm text-blue-700">
               <Calendar className="w-4 h-4" />
-              <span>Visit: {currentPatient.visit}</span>
+              <span>Visit: {currentSubject.visit}</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <select 
-              value={currentPatient.id}
+              value={currentSubject.id}
               onChange={(e) => {
                 const newPatientId = e.target.value;
                 window.history.pushState({}, '', `/live-monitor?patient=${newPatientId}`);
@@ -89,20 +89,20 @@ export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
               }}
               className="px-3 py-1 text-sm border border-blue-300 rounded-md bg-white text-blue-900"
             >
-              {mockPatients.map(patient => (
-                <option key={patient.id} value={patient.id}>
-                  {patient.id} ({patient.name})
+              {mockSubjects.map(subject => (
+                <option key={subject.id} value={subject.id}>
+                  {subject.id} ({subject.name})
                 </option>
               ))}
             </select>
             <button
-              onClick={() => window.location.href = `/patients/${currentPatient.id}`}
+              onClick={() => window.location.href = `/patients/${currentSubject.id}`}
               className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               View Profile →
             </button>
             <button
-              onClick={() => window.location.href = `/visit-schedule?patient=${currentPatient.id}`}
+              onClick={() => window.location.href = `/visit-schedule?patient=${currentSubject.id}`}
               className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               View Schedule →
@@ -162,7 +162,7 @@ export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
           normalRange={`${vitals.heartRate.normalRange.min}-${vitals.heartRate.normalRange.max} ${vitals.heartRate.unit}`}
           icon={<Heart className="w-5 h-5 text-red-500" />}
           lastUpdate={connection.lastUpdate}
-          patientId={currentPatient.id}
+          patientId={currentSubject.id}
           vitalType="heart_rate"
           onFlagAsAE={handleFlagAsAE}
         />
@@ -174,7 +174,7 @@ export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
           trend={vitals.bloodPressure.trend}
           normalRange={vitals.bloodPressure.normalRange}
           lastUpdate={connection.lastUpdate}
-          patientId={currentPatient.id}
+          patientId={currentSubject.id}
           onFlagAsAE={handleFlagAsAE}
         />
 
@@ -187,7 +187,7 @@ export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
           normalRange={`${vitals.spo2.normalRange.min}-${vitals.spo2.normalRange.max} ${vitals.spo2.unit}`}
           icon={<Droplets className="w-5 h-5 text-blue-500" />}
           lastUpdate={connection.lastUpdate}
-          patientId={currentPatient.id}
+          patientId={currentSubject.id}
           vitalType="spo2"
           onFlagAsAE={handleFlagAsAE}
         />
@@ -201,7 +201,7 @@ export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
           normalRange={`${vitals.temperature.normalRange.min}-${vitals.temperature.normalRange.max} ${vitals.temperature.unit}`}
           icon={<Thermometer className="w-5 h-5 text-orange-500" />}
           lastUpdate={connection.lastUpdate}
-          patientId={currentPatient.id}
+          patientId={currentSubject.id}
           vitalType="temperature"
           onFlagAsAE={handleFlagAsAE}
         />
@@ -215,7 +215,7 @@ export default function LiveMonitorTab({ patientId }: LiveMonitorTabProps) {
           normalRange={`${vitals.respiratoryRate.normalRange.min}-${vitals.respiratoryRate.normalRange.max} ${vitals.respiratoryRate.unit}`}
           icon={<Activity className="w-5 h-5 text-green-500" />}
           lastUpdate={connection.lastUpdate}
-          patientId={currentPatient.id}
+          patientId={currentSubject.id}
           vitalType="respiratory_rate"
           onFlagAsAE={handleFlagAsAE}
         />

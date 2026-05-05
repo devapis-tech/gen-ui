@@ -19,7 +19,7 @@ interface Document {
 
 const mockDocs: Document[] = [
     { id: "DOC001", name: "Clinical Trial Protocol v2.1.pdf", type: "Protocol", version: "2.1", uploadedAt: "2024-02-15", uploadedBy: "Rahul M.", status: "APPROVED", relatedTo: "Trial: EMERALD-3 (NCT07415044)" },
-    { id: "DOC002", name: "Informed Consent Form - Site A.docx", type: "ICF", version: "1.0", uploadedAt: "2024-03-01", uploadedBy: "Sarah J.", status: "PENDING", relatedTo: "Site: One of a Kind CRC | 91 patients", reviewer: "Principal Investigator", reviewDeadline: "2024-03-15" },
+    { id: "DOC002", name: "Informed Consent Form - Site A.docx", type: "ICF", version: "1.0", uploadedAt: "2024-03-01", uploadedBy: "Sarah J.", status: "PENDING", relatedTo: "Site: One of a Kind CRC | 91 subjects", reviewer: "Principal Investigator", reviewDeadline: "2024-03-15" },
     { id: "DOC003", name: "Investigator Brochure.pdf", type: "IB", version: "4.0", uploadedAt: "2024-01-20", uploadedBy: "Rahul M.", status: "APPROVED", relatedTo: "Trial: EMERALD-3" },
     { id: "DOC004", name: "Lab Manual.pdf", type: "Manual", version: "1.2", uploadedAt: "2024-03-10", uploadedBy: "System", status: "DRAFT", relatedTo: "All Sites", reviewer: "Lab Director", reviewDeadline: "2024-04-01" },
 ];

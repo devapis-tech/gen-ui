@@ -146,10 +146,10 @@ export function Workspace({ trialData, selectedForms, onContinue, onBack }: Work
 
         <div className="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-lg text-white cursor-pointer hover:from-green-600 hover:to-green-700 transition-all"
           onClick={onContinue}>
-          <h3 className="text-xl font-semibold mb-2">Patient Management</h3>
-          <p className="text-green-100 mb-4">Monitor patient visits, safety data, and live trial status</p>
+          <h3 className="text-xl font-semibold mb-2">Subject Management</h3>
+          <p className="text-green-100 mb-4">Monitor subject visits, safety data, and live trial status</p>
           <div className="flex items-center text-white">
-            <span>Manage Patients</span>
+            <span>Manage Subjects</span>
             <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
@@ -204,7 +204,7 @@ export function Workspace({ trialData, selectedForms, onContinue, onBack }: Work
 
       <div className="mt-6 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg">
         <p className="text-sm">
-          💡 <strong>Next Steps:</strong> Review your trial information, then proceed to Trial Design for detailed protocol overview or Patient Management for visit tracking and safety monitoring.
+          💡 <strong>Next Steps:</strong> Review your trial information, then proceed to Trial Design for detailed protocol overview or Subject Management for visit tracking and safety monitoring.
         </p>
       </div>
     </div>

@@ -88,18 +88,18 @@ export function EndpointsList() {
         } else {
           // Fallback to mock metrics
           setLiveMetrics({
-            "1": { currentRate: "12.5%", patients: 12, total: 96, trend: "+2.3%" },
-            "2": { currentRate: "8.7%", patients: 8, total: 92, trend: "+1.1%" },
-            "3": { currentRate: "23.4%", patients: 22, total: 94, trend: "+3.2%" }
+            "1": { currentRate: "12.5%", subjects: 12, total: 96, trend: "+2.3%" },
+            "2": { currentRate: "8.7%", subjects: 8, total: 92, trend: "+1.1%" },
+            "3": { currentRate: "23.4%", subjects: 22, total: 94, trend: "+3.2%" }
           });
         }
       } catch (error) {
         console.error('Failed to fetch metrics:', error);
         // Fallback to mock metrics
         setLiveMetrics({
-          "1": { currentRate: "12.5%", patients: 12, total: 96, trend: "+2.3%" },
-          "2": { currentRate: "8.7%", patients: 8, total: 92, trend: "+1.1%" },
-          "3": { currentRate: "23.4%", patients: 22, total: 94, trend: "+3.2%" }
+          "1": { currentRate: "12.5%", subjects: 12, total: 96, trend: "+2.3%" },
+          "2": { currentRate: "8.7%", subjects: 8, total: 92, trend: "+1.1%" },
+          "3": { currentRate: "23.4%", subjects: 22, total: 94, trend: "+3.2%" }
         });
       }
     };
@@ -256,7 +256,7 @@ export function EndpointsList() {
                         </a>
                       </div>
                       <div className="mt-2 text-xs text-gray-500">
-                        {liveMetrics[endpoint.id].patients} of {liveMetrics[endpoint.id].total} patients
+                        {liveMetrics[endpoint.id].subjects} of {liveMetrics[endpoint.id].total} subjects
                       </div>
                     </div>
                   )}
@@ -366,7 +366,7 @@ export function EndpointsList() {
                         </a>
                       </div>
                       <div className="mt-2 text-xs text-gray-500">
-                        {liveMetrics[endpoint.id].patients} of {liveMetrics[endpoint.id].total} patients
+                        {liveMetrics[endpoint.id].subjects} of {liveMetrics[endpoint.id].total} subjects
                       </div>
                     </div>
                   )}

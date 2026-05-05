@@ -75,8 +75,8 @@ export default function SettingsPage() {
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">System Settings</h1>
-                <p className="text-lg text-gray-600">Configure trial parameters, user permissions, and notifications</p>
+                <h1 className="text-3xl font-bold text-cg-dark-blue mb-2">System Settings</h1>
+                <p className="text-lg text-cg-blue">Configure trial parameters, user permissions, and notifications</p>
             </div>
 
             <div className="space-y-6">
@@ -89,19 +89,19 @@ export default function SettingsPage() {
                 )}
 
                 {/* Active Trial Section */}
-                <section className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm border border-blue-200 overflow-hidden">
+                <section className="bg-cg-gradient rounded-xl shadow-sm overflow-hidden">
                     <div className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wide mb-2">Active Trial</h3>
-                                <h2 className="text-xl font-bold text-gray-900 mb-1">EMERALD-3 — LY4268989 in Adults With UC</h2>
-                                <p className="text-sm text-gray-600 mb-3">NCT07415044 · Phase 2 · Eli Lilly · Status: NOT_YET_RECRUITING</p>
-                                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1">
+                                <h3 className="text-sm font-semibold text-cg-white uppercase tracking-wide mb-2">Active Trial</h3>
+                                <h2 className="text-xl font-bold text-cg-white mb-1">EMERALD-3 — LY4268989 in Adults With UC</h2>
+                                <p className="text-sm text-cg-light-blue mb-3">NCT07415044 · Phase 2 · Eli Lilly · Status: NOT_YET_RECRUITING</p>
+                                <button className="text-cg-turquoise hover:text-cg-white text-sm font-medium flex items-center space-x-1 transition-colors">
                                     <span>View Trial Design</span>
                                     <span>→</span>
                                 </button>
                             </div>
-                            <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                            <div className="bg-cg-blue bg-opacity-20 text-cg-white px-3 py-1 rounded-full text-sm font-medium border border-cg-light-blue">
                                 CURRENT
                             </div>
                         </div>
@@ -130,7 +130,7 @@ export default function SettingsPage() {
                                     <span className="text-xs text-gray-400 uppercase">Active Role</span>
                                     <p className="font-medium text-gray-900">{userRole?.title || 'Internal Team'}</p>
                                 </div>
-                                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Change Role</button>
+                                <button className="text-cg-blue hover:text-cg-light-blue text-sm font-medium">Change Role</button>
                             </div>
                         </div>
                     </div>
@@ -144,13 +144,13 @@ export default function SettingsPage() {
                                 <Users className="w-5 h-5 text-gray-500" />
                                 <h2 className="font-bold text-gray-900">Team Roles</h2>
                             </div>
-                            <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">+ Invite Team Member</button>
+                            <button className="text-cg-blue hover:text-cg-light-blue text-sm font-medium">+ Invite Team Member</button>
                         </div>
                         <div className="p-6">
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                     <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-medium text-sm">RM</div>
+                                        <div className="w-8 h-8 bg-cg-blue rounded-full flex items-center justify-center text-cg-white font-medium text-sm">RM</div>
                                         <div>
                                             <p className="font-medium text-gray-900">Rahul M.</p>
                                             <p className="text-sm text-gray-500">rahul@multiplier.ai</p>
@@ -215,7 +215,7 @@ export default function SettingsPage() {
                         </div>
                         <div className="flex items-center justify-between py-2 border-t border-gray-100">
                             <div>
-                                <p className="text-sm font-medium text-gray-900">Real-time Patient Monitoring</p>
+                                <p className="text-sm font-medium text-gray-900">Real-time Subject Monitoring</p>
                                 <p className="text-xs text-gray-500">
                                     {realtimeMonitoring 
                                         ? "Stream data from wearable devices directly to live monitor" 
@@ -385,7 +385,7 @@ export default function SettingsPage() {
                     </button>
                     <button 
                         onClick={handleSaveSettings}
-                        className="flex items-center space-x-2 bg-accent text-white px-8 py-2 rounded-lg font-medium bg-accent-hover transition-all shadow-lg hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center space-x-2 bg-cg-blue text-cg-white px-8 py-2 rounded-lg font-medium bg-cg-light-blue transition-all shadow-lg hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={!hasChanges}
                     >
                         <Save className="w-4 h-4" />

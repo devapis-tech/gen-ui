@@ -214,7 +214,7 @@ export function IssueReportForm({ isOpen, onClose, onSubmit, sourceContext }: Is
               </label>
               <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <div className="text-sm text-gray-600">
-                  {sourceContext?.patientId && <div>• Patient: {sourceContext.patientId}</div>}
+                  {sourceContext?.patientId && <div>• Subject: {sourceContext.patientId}</div>}
                   {sourceContext?.formId && <div>• Form: {sourceContext.formId}</div>}
                   {sourceContext?.visitId && <div>• Visit: {sourceContext.visitId}</div>}
                   {sourceContext?.aeId && <div>• AE: {sourceContext.aeId}</div>}

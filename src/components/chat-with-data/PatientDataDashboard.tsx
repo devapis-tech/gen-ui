@@ -15,7 +15,7 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
 
     // Make live patient data available to the AI assistant
     useCopilotReadable({
-        description: "Live list of all patients in the clinical trial",
+        description: "Live list of all subjects in the clinical trial",
         value: patients.map(p => {
             const completed = p.visitHistory?.filter(v => v.status === "COMPLETED").length || 0;
             const total = p.visitHistory?.length || 1;
@@ -48,7 +48,7 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Patients</span>
+                        <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Subjects</span>
                         <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
                             <Users size={20} />
                         </div>
@@ -116,7 +116,7 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
                     <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                         <h3 className="text-sm font-bold text-gray-700 uppercase tracking-widest flex items-center">
                             <TrendingUp size={16} className="mr-2 text-blue-500" />
-                            Patient Enrollment Trends
+                            Subject Enrollment Trends
                         </h3>
                         <span className="text-[10px] text-gray-400 font-mono">LIVE FEED</span>
                     </div>
@@ -133,7 +133,7 @@ export function PatientDataDashboard({ dateRange = '30' }: PatientDataDashboardP
                                             onClick={() => router.push(`/patients?enrolled_month=${month}`)}
                                         >
                                             <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                                {val} patients • {month}
+                                                {val} subjects • {month}
                                             </div>
                                         </div>
                                         <span className="text-[10px] text-gray-400 mt-2 font-medium">

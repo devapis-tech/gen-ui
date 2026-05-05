@@ -1,20 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { UserRoleProvider } from "@/contexts/UserRoleContext";
 import { ChatSidebarProvider } from "@/contexts/ChatSidebarContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { CopilotKit } from "@copilotkit/react-core";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Multiplier AI - Clinical Trial",
@@ -28,9 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="antialiased">
         <CopilotKit runtimeUrl="/api/copilotkit">
           <UserRoleProvider>
             <ChatSidebarProvider>

@@ -82,7 +82,7 @@ export default function PatientsPage() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "patients.csv";
+    a.download = "subjects.csv";
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -91,8 +91,8 @@ export default function PatientsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Patient Management</h1>
-        <p className="text-lg text-gray-600">View and manage all enrolled patients across all trial sites</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Subject Management</h1>
+        <p className="text-lg text-gray-600">View and manage all enrolled subjects across all trial sites</p>
       </div>
 
       {/* Overview Cards */}
@@ -100,7 +100,7 @@ export default function PatientsPage() {
         <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">Total Patients</p>
+              <p className="text-sm font-medium text-gray-500">Total Subjects</p>
               <p className="text-3xl font-bold text-gray-900">{patients.length}</p>
             </div>
             <div className="bg-blue-50 p-3 rounded-lg">
@@ -227,7 +227,7 @@ export default function PatientsPage() {
       <div className="bg-white rounded-lg shadow-md border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-gray-900">
-            {statusFilter === "all" ? "All Patients" : `${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Patients`}
+            {statusFilter === "all" ? "All Subjects" : `${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Subjects`}
             <span className="ml-2 text-sm text-gray-500">({sortedPatients.length})</span>
           </h2>
           <button
@@ -361,7 +361,7 @@ export default function PatientsPage() {
       {/* Quick Actions */}
       <div className="mt-8 flex justify-between items-center">
         <div className="text-sm text-gray-500">
-          Showing {sortedPatients.length} of {patients.length} patients
+          Showing {sortedPatients.length} of {patients.length} subjects
           {statusFilter !== "all" && ` (${statusFilter})`}
           {searchQuery && ` matching "${searchQuery}"`}
           {trialArmFilter && ` in ${trialArmFilter}`}
@@ -372,7 +372,7 @@ export default function PatientsPage() {
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Enroll Patient
+            Enroll Subject
           </Link>
         </div>
       </div>

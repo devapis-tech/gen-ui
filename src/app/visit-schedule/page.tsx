@@ -14,7 +14,7 @@ interface Patient {
   status: 'active' | 'completed' | 'withdrawn';
 }
 
-const mockPatients: Patient[] = [
+const mockSubjects: Patient[] = [
   { id: '1', name: 'John Doe', studyId: 'STUDY-001', status: 'active' },
   { id: '2', name: 'Jane Smith', studyId: 'STUDY-001', status: 'active' },
   { id: '3', name: 'Robert Johnson', studyId: 'STUDY-002', status: 'completed' },
@@ -23,25 +23,25 @@ const mockPatients: Patient[] = [
 export default function VisitSchedulePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<Patient | null>(null);
   const [activeTab, setActiveTab] = useState<'scheduled' | 'safety' | 'monitor'>('scheduled');
 
   // Initialize patient from URL on mount
   useEffect(() => {
     const patientId = searchParams.get('patient');
     if (patientId) {
-      const patient = mockPatients.find(p => p.id === patientId);
-      setSelectedPatient(patient || mockPatients[0]);
+      const subject = mockSubjects.find((p: Patient) => p.id === patientId);
+      setSelectedSubject(subject || mockSubjects[0]);
     } else {
-      setSelectedPatient(mockPatients[0]);
+      setSelectedSubject(mockSubjects[0]);
     }
   }, [searchParams]);
 
-  const handlePatientChange = (patientId: string) => {
-    const patient = mockPatients.find(p => p.id === patientId);
-    setSelectedPatient(patient || null);
+  const handleSubjectChange = (subjectId: string) => {
+    const subject = mockSubjects.find((p: Patient) => p.id === subjectId);
+    setSelectedSubject(subject || null);
     // Update URL with patient parameter
-    router.push(`/visit-schedule?patient=${patientId}`);
+    router.push(`/visit-schedule?patient=${subjectId}`);
   };
 
   const tabs = [
@@ -62,16 +62,16 @@ export default function VisitSchedulePage() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <Users className="w-5 h-5 text-gray-500" />
-                <label className="text-sm font-medium text-gray-700">Select Patient:</label>
+                <label className="text-sm font-medium text-gray-700">Select Subject:</label>
               </div>
               <select
-                value={selectedPatient?.id || ''}
-                onChange={(e) => handlePatientChange(e.target.value)}
+                value={selectedSubject?.id || ''}
+                onChange={(e) => handleSubjectChange(e.target.value)}
                 className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                {mockPatients.map((patient) => (
-                  <option key={patient.id} value={patient.id}>
-                    {patient.name} - {patient.studyId} ({patient.status})
+                {mockSubjects.map((subject) => (
+                  <option key={subject.id} value={subject.id}>
+                    {subject.name} - {subject.studyId} ({subject.status})
                   </option>
                 ))}
               </select>
@@ -105,16 +105,16 @@ export default function VisitSchedulePage() {
 
           {/* Tab Content */}
           <div className="p-6">
-            {selectedPatient ? (
+            {selectedSubject ? (
               <>
                 {activeTab === 'scheduled' && (
-                  <ScheduledVisitsTab patientId={selectedPatient.id} />
+                  <ScheduledVisitsTab patientId={selectedSubject.id} />
                 )}
                 {activeTab === 'safety' && (
-                  <SafetyReportingTab patientId={selectedPatient.id} />
+                  <SafetyReportingTab patientId={selectedSubject.id} />
                 )}
                 {activeTab === 'monitor' && (
-                  <LiveMonitorTab patientId={selectedPatient.id} />
+                  <LiveMonitorTab patientId={selectedSubject.id} />
                 )}
               </>
             ) : (

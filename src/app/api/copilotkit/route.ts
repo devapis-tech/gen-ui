@@ -38,12 +38,12 @@ export const POST = async (req: NextRequest) => {
     actions: [
       {
         name: "searchPatients",
-        description: "Search for patients in the clinical trial",
+        description: "Search for subjects in the clinical trial",
         parameters: [
           {
             name: "query",
             type: "string",
-            description: "Search query for patients (name, ID, or status)",
+            description: "Search query for subjects (name, ID, or status)",
             required: true,
           },
         ],
@@ -65,20 +65,20 @@ export const POST = async (req: NextRequest) => {
       } as any,
       {
         name: "enrollPatient",
-        description: "Enroll a new patient in the clinical trial",
+        description: "Enroll a new subject in the clinical trial",
         parameters: [
           {
-            name: "patientData",
+            name: "subjectData",
             type: "object",
-            description: "Patient information for enrollment",
+            description: "Subject information for enrollment",
             required: true,
           },
         ],
-        handler: async ({ patientData }: { patientData: any }) => {
+        handler: async ({ subjectData }: { subjectData: any }) => {
           // Simulate patient enrollment
           const newPatient = {
             id: `EMR-${String(mockPatients.length + 1).padStart(3, '0')}`,
-            name: patientData.name || "New Patient",
+            name: subjectData.name || "New Subject",
             status: "Screening",
             compliance: "N/A"
           };
@@ -87,8 +87,8 @@ export const POST = async (req: NextRequest) => {
           
           return {
             success: true,
-            patient: newPatient,
-            message: `Patient ${newPatient.name} successfully enrolled with ID ${newPatient.id}`
+            subject: newPatient,
+            message: `Subject ${newPatient.name} successfully enrolled with ID ${newPatient.id}`
           };
         },
       } as any,
@@ -107,7 +107,7 @@ export const POST = async (req: NextRequest) => {
           // Simulate adverse event reporting
           const newEvent = {
             id: `AE-${String(mockAdverseEvents.length + 1).padStart(3, '0')}`,
-            patient: eventData.patientId || "Unknown",
+            patient: eventData.subjectId || "Unknown",
             type: eventData.type || "Unknown",
             severity: eventData.severity || "Unknown",
             date: new Date().toISOString().split('T')[0]
@@ -130,9 +130,9 @@ export const POST = async (req: NextRequest) => {
           return {
             success: true,
             metrics: {
-              totalPatients: mockPatients.length,
-              enrolledPatients: mockPatients.filter(p => p.status === "Enrolled").length,
-              screeningPatients: mockPatients.filter(p => p.status === "Screening").length,
+              totalSubjects: mockPatients.length,
+              enrolledSubjects: mockPatients.filter(p => p.status === "Enrolled").length,
+              screeningSubjects: mockPatients.filter(p => p.status === "Screening").length,
               averageCompliance: "91.5%",
               totalAdverseEvents: mockAdverseEvents.length,
               severeEvents: mockAdverseEvents.filter(ae => ae.severity === "Severe").length,
@@ -171,12 +171,12 @@ export const GET = async (req: NextRequest) => {
     actions: [
       {
         name: "searchPatients",
-        description: "Search for patients in the clinical trial",
+        description: "Search for subjects in the clinical trial",
         parameters: [
           {
             name: "query",
             type: "string",
-            description: "Search query for patients (name, ID, or status)",
+            description: "Search query for subjects (name, ID, or status)",
             required: true,
           },
         ],
@@ -198,12 +198,12 @@ export const GET = async (req: NextRequest) => {
       } as any,
       {
         name: "enrollPatient",
-        description: "Enroll a new patient in the clinical trial",
+        description: "Enroll a new subject in the clinical trial",
         parameters: [
           {
-            name: "patientData",
+            name: "subjectData",
             type: "object",
-            description: "Patient information for enrollment",
+            description: "Subject information for enrollment",
             required: true,
           },
         ],

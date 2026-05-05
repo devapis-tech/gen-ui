@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ClinicalTrial } from "@/types/clinical-trial";
 
-interface Patient {
+interface Subject {
   id: string;
   subjectId: string;
   initials: string;
@@ -34,7 +34,7 @@ interface SafetyReport {
   status: "OPEN" | "CLOSED" | "FOLLOW_UP_REQUIRED";
 }
 
-interface PatientManagementProps {
+interface SubjectManagementProps {
   trialData: ClinicalTrial | null;
   onBack: () => void;
   onContinue: () => void;
@@ -42,9 +42,9 @@ interface PatientManagementProps {
 
 type DataType = "ECFR" | "SAFETY" | "LIVE_MONITOR";
 
-export function PatientManagement({ trialData, onBack, onContinue }: PatientManagementProps) {
+export function SubjectManagement({ trialData, onBack, onContinue }: SubjectManagementProps) {
   const [activeTab, setActiveTab] = useState<DataType>("ECFR");
-  const [patients] = useState<Patient[]>([
+  const [patients] = useState<Subject[]>([
     {
       id: "1",
       subjectId: "SUBJ-001",
@@ -179,10 +179,10 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          Patient Management
+          Subject Management
         </h1>
         <p className="text-lg text-gray-600">
-          Monitor patient visits, safety data, and live trial status
+          Monitor subject visits, safety data, and live trial status
         </p>
       </div>
 
@@ -230,18 +230,18 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">eCFR/CFR Visit Schedule</h3>
                 <button className="px-4 py-2 bg-accent text-white rounded-lg bg-accent-hover text-sm">
-                  Add Patient
+                  Add Subject
                 </button>
               </div>
 
-              {/* Patients Overview */}
+              {/* Subjects Overview */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-medium text-gray-900 mb-2">Total Enrolled</h4>
                   <p className="text-2xl font-bold text-accent">{patients.length}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-900 mb-2">Active Patients</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">Active Subjects</h4>
                   <p className="text-2xl font-bold text-green-600">
                     {patients.filter(p => p.status === "ENROLLED").length}
                   </p>
@@ -254,7 +254,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
                 </div>
               </div>
 
-              {/* Patients Table */}
+              {/* Subjects Table */}
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -401,7 +401,7 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
                         Report ID
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Patient
+                        Subject
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Type
@@ -487,12 +487,12 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
                 <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg text-white">
                   <h4 className="font-medium mb-2">Enrollment Rate</h4>
                   <p className="text-3xl font-bold mb-1">2.3</p>
-                  <p className="text-sm opacity-90">patients/month</p>
+                  <p className="text-sm opacity-90">subjects/month</p>
                 </div>
                 <div className="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-lg text-white">
                   <h4 className="font-medium mb-2">Retention Rate</h4>
                   <p className="text-3xl font-bold mb-1">94%</p>
-                  <p className="text-sm opacity-90">of enrolled patients</p>
+                  <p className="text-sm opacity-90">of enrolled subjects</p>
                 </div>
                 <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-6 rounded-lg text-white">
                   <h4 className="font-medium mb-2">Protocol Compliance</h4>
@@ -553,11 +553,11 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Enrolled:</span>
-                        <span className="font-medium">8 patients</span>
+                        <span className="font-medium">8 subjects</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Active:</span>
-                        <span className="font-medium text-green-600">7 patients</span>
+                        <span className="font-medium text-green-600">7 subjects</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Compliance:</span>
@@ -570,11 +570,11 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Enrolled:</span>
-                        <span className="font-medium">5 patients</span>
+                        <span className="font-medium">5 subjects</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Active:</span>
-                        <span className="font-medium text-green-600">4 patients</span>
+                        <span className="font-medium text-green-600">4 subjects</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Compliance:</span>
@@ -587,11 +587,11 @@ export function PatientManagement({ trialData, onBack, onContinue }: PatientMana
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Enrolled:</span>
-                        <span className="font-medium">3 patients</span>
+                        <span className="font-medium">3 subjects</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Active:</span>
-                        <span className="font-medium text-green-600">3 patients</span>
+                        <span className="font-medium text-green-600">3 subjects</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Compliance:</span>

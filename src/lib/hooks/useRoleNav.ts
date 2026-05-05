@@ -27,7 +27,7 @@ export const navItems: NavItem[] = [
   { label: "Trial Design", route: "/trial-design", icon: FlaskConical, roles: ["ADMIN", "COORDINATOR", "MONITOR"] },
   { label: "Visit & Schedule", route: "/visit-schedule", icon: Calendar, roles: ["ADMIN", "COORDINATOR"] },
   { label: "Live Monitor", route: "/live-monitor", icon: Activity, roles: ["ADMIN", "MONITOR", "COORDINATOR"] },
-  { label: "Patients", route: "/patients", icon: Users, roles: ["ADMIN", "COORDINATOR", "MONITOR", "PATIENT"] },
+  { label: "Subjects", route: "/patients", icon: Users, roles: ["ADMIN", "COORDINATOR", "MONITOR", "PATIENT"] },
   { label: "Adverse Events", route: "/adverse-events", icon: AlertTriangle, roles: ["ADMIN", "COORDINATOR", "MONITOR"] },
   { label: "Documents", route: "/documents", icon: FileText, roles: ["ADMIN", "COORDINATOR", "MONITOR"] },
   { label: "Forms", route: "/forms", icon: ClipboardList, roles: ["ADMIN", "COORDINATOR", "MONITOR", "PATIENT"] },

@@ -37,12 +37,12 @@ export function PersistentChatSidebar() {
           AssistantMessage={CustomAssistantMessage}
           labels={{
             title: "Clinical Trial Assistant",
-            initial: "Hello! I'm your AI-powered clinical trial assistant. I can help you with patient management, adverse event reporting, visit scheduling, and data analysis. How can I assist you today?",
-            placeholder: "Ask about patients, trials, adverse events, or data analysis..."
+            initial: "Hello! I'm your AI-powered clinical trial assistant. I can help you with subject management, adverse event reporting, visit scheduling, and data analysis. How can I assist you today?",
+            placeholder: "Ask about subjects, trials, adverse events, or data analysis..."
           }}
-          instructions="You are a specialized clinical trial assistant for the EMERALD-3 trial. You have access to real-time dashboard data including patient counts, compliance metrics, adverse events, and visit schedules. Help users with:
+          instructions="You are a specialized clinical trial assistant for the EMERALD-3 trial. You have access to real-time dashboard data including subject counts, compliance metrics, adverse events, and visit schedules. Help users with:
 
-1. Patient management (search, enroll, track status)
+1. Subject management (search, enroll, track status)
 2. Adverse event reporting and monitoring
 3. Visit scheduling and compliance tracking
 4. Data analysis and trial insights

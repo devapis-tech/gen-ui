@@ -372,7 +372,7 @@ export function TrialDesign({ trialData, onBack, onContinue }: TrialDesignProps)
           onClick={onContinue}
           className="px-6 py-2 bg-accent text-white rounded-lg bg-accent-hover"
         >
-          Continue to Patient Management
+          Continue to Subject Management
         </button>
       </div>
     </div>

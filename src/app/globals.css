@@ -2,12 +2,36 @@
 @import "@copilotkit/react-ui/styles.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --accent: #800080;
-  --accent-hover: #660666;
-  --accent-light: #993299;
-  --accent-dark: #660066;
+  /* Capgemini Brand Colors */
+  --cg-dark-blue: #121A38;
+  --cg-blue: #0058AB;
+  --cg-light-blue: #1DB8F2;
+  --cg-turquoise: #00D5D0;
+  --cg-yellow: #FEB100;
+  --cg-orange: #FF816E;
+  --cg-lilac: #D4D3F1;
+  --cg-teal: #00828E;
+  --cg-terracotta: #BE4D00;
+  --cg-deep-red: #8F3237;
+  --cg-purple: #71609E;
+  --cg-white: #FFFFFF;
+  --cg-gradient: linear-gradient(to right, #00D5D0, #1DB8F2 25%, #0058AB 65%, #121A38);
+
+  /* Application Colors */
+  --background: var(--cg-white);
+  --foreground: var(--cg-dark-blue);
+  --accent: var(--cg-blue);
+  --accent-hover: var(--cg-light-blue);
+  --accent-light: var(--cg-turquoise);
+  --accent-dark: var(--cg-dark-blue);
+
+  /* Capgemini Font System */
+  --cg-font-brand: 'Ubuntu', 'Verdana', sans-serif;
+  --cg-font-alt:   'Verdana', sans-serif;
+  --cg-weight-light:   300;
+  --cg-weight-regular: 400;
+  --cg-weight-medium:  500;
+  --cg-weight-bold:    700;
 }
 
 @theme inline {
@@ -17,25 +41,26 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-light: var(--accent-light);
   --color-accent-dark: var(--accent-dark);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--cg-font-brand);
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --accent: #993299;
-    --accent-hover: #b366b3;
-    --accent-light: #800080;
-    --accent-dark: #660066;
+    --background: var(--cg-dark-blue);
+    --foreground: var(--cg-white);
+    --accent: var(--cg-blue);
+    --accent-hover: var(--cg-light-blue);
+    --accent-light: var(--cg-turquoise);
+    --accent-dark: var(--cg-teal);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--cg-font-brand);
+  font-weight: var(--cg-weight-regular);
 }
 
 /* Hide CopilotKit branding */
@@ -61,7 +86,48 @@ span[class*="PoweredBy"] {
   opacity: 0 !important;
 }
 
-/* Purple accent button utility classes */
+/* Capgemini Brand Color Utility Classes */
+.bg-cg-dark-blue { background-color: var(--cg-dark-blue); }
+.bg-cg-blue { background-color: var(--cg-blue); }
+.bg-cg-light-blue { background-color: var(--cg-light-blue); }
+.bg-cg-turquoise { background-color: var(--cg-turquoise); }
+.bg-cg-yellow { background-color: var(--cg-yellow); }
+.bg-cg-orange { background-color: var(--cg-orange); }
+.bg-cg-lilac { background-color: var(--cg-lilac); }
+.bg-cg-teal { background-color: var(--cg-teal); }
+.bg-cg-terracotta { background-color: var(--cg-terracotta); }
+.bg-cg-deep-red { background-color: var(--cg-deep-red); }
+.bg-cg-purple { background-color: var(--cg-purple); }
+.bg-cg-white { background-color: var(--cg-white); }
+.bg-cg-gradient { background: var(--cg-gradient); }
+
+.text-cg-dark-blue { color: var(--cg-dark-blue); }
+.text-cg-blue { color: var(--cg-blue); }
+.text-cg-light-blue { color: var(--cg-light-blue); }
+.text-cg-turquoise { color: var(--cg-turquoise); }
+.text-cg-yellow { color: var(--cg-yellow); }
+.text-cg-orange { color: var(--cg-orange); }
+.text-cg-lilac { color: var(--cg-lilac); }
+.text-cg-teal { color: var(--cg-teal); }
+.text-cg-terracotta { color: var(--cg-terracotta); }
+.text-cg-deep-red { color: var(--cg-deep-red); }
+.text-cg-purple { color: var(--cg-purple); }
+.text-cg-white { color: var(--cg-white); }
+
+.border-cg-dark-blue { border-color: var(--cg-dark-blue); }
+.border-cg-blue { border-color: var(--cg-blue); }
+.border-cg-light-blue { border-color: var(--cg-light-blue); }
+.border-cg-turquoise { border-color: var(--cg-turquoise); }
+.border-cg-yellow { border-color: var(--cg-yellow); }
+.border-cg-orange { border-color: var(--cg-orange); }
+.border-cg-lilac { border-color: var(--cg-lilac); }
+.border-cg-teal { border-color: var(--cg-teal); }
+.border-cg-terracotta { border-color: var(--cg-terracotta); }
+.border-cg-deep-red { border-color: var(--cg-deep-red); }
+.border-cg-purple { border-color: var(--cg-purple); }
+.border-cg-white { border-color: var(--cg-white); }
+
+/* Purple accent button utility classes (legacy - kept for compatibility) */
 .bg-accent {
   background-color: var(--accent);
 }
@@ -88,4 +154,118 @@ span[class*="PoweredBy"] {
 
 .border-accent-hover:hover {
   border-color: var(--accent-hover);
+}
+
+/* Capgemini Ubuntu Font System Utilities */
+.cg-font-brand {
+  font-family: var(--cg-font-brand);
+}
+
+.cg-font-alt {
+  font-family: var(--cg-font-alt);
+}
+
+.cg-light {
+  font-weight: var(--cg-weight-light);
+}
+
+.cg-regular {
+  font-weight: var(--cg-weight-regular);
+}
+
+.cg-medium {
+  font-weight: var(--cg-weight-medium);
+}
+
+.cg-bold {
+  font-weight: var(--cg-weight-bold);
+}
+
+.cg-italic {
+  font-style: italic;
+  font-weight: var(--cg-weight-regular);
+}
+
+.cg-italic-bold {
+  font-style: italic;
+  font-weight: var(--cg-weight-bold);
+}
+
+/* Typography Scale Classes */
+.cg-display {
+  font-size: 56px;
+  font-weight: var(--cg-weight-bold);
+  line-height: 1.2;
+  color: var(--cg-dark-blue);
+}
+
+.cg-heading-1 {
+  font-size: 36px;
+  font-weight: var(--cg-weight-bold);
+  line-height: 1.3;
+  color: var(--cg-blue);
+}
+
+.cg-heading-2 {
+  font-size: 26px;
+  font-weight: var(--cg-weight-bold);
+  line-height: 1.3;
+  color: var(--cg-blue);
+}
+
+.cg-heading-3 {
+  font-size: 20px;
+  font-weight: var(--cg-weight-medium);
+  line-height: 1.4;
+  color: var(--cg-blue);
+}
+
+.cg-body {
+  font-size: 16px;
+  font-weight: var(--cg-weight-regular);
+  line-height: 1.6;
+}
+
+.cg-body-small {
+  font-size: 14px;
+  font-weight: var(--cg-weight-regular);
+  line-height: 1.5;
+  color: #6c757d;
+}
+
+.cg-label {
+  font-size: 12px;
+  font-weight: var(--cg-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--cg-blue);
+}
+
+.cg-caption {
+  font-size: 11px;
+  font-weight: var(--cg-weight-light);
+  font-style: italic;
+  color: #6c757d;
+}
+
+/* Form Elements Typography */
+.cg-input, .cg-select, .cg-textarea {
+  font-family: var(--cg-font-brand);
+  font-size: 14px;
+  font-weight: var(--cg-weight-regular);
+}
+
+.cg-input::placeholder {
+  font-weight: var(--cg-weight-light);
+}
+
+/* Button Typography */
+.cg-btn {
+  font-family: var(--cg-font-brand);
+  font-size: 14px;
+  font-weight: var(--cg-weight-medium);
+}
+
+.cg-btn-primary {
+  font-weight: var(--cg-weight-bold);
 }

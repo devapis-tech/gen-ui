@@ -121,12 +121,12 @@ export function Dashboard() {
   // Action: Search Patients
   useCopilotAction({
     name: "searchPatients",
-    description: "Search for patients in the clinical trial",
+    description: "Search for subjects in the clinical trial",
     parameters: [
       {
         name: "query",
         type: "string",
-        description: "Search query for patients (name, ID, or status)",
+        description: "Search query for subjects (name, ID, or status)",
         required: true,
       },
     ],
@@ -173,7 +173,7 @@ export function Dashboard() {
                 </div>
               </div>
             ))}
-            {result.count === 0 && <p className="text-sm text-gray-500 italic">No patients found matching your search.</p>}
+            {result.count === 0 && <p className="text-sm text-gray-500 italic">No subjects found matching your search.</p>}
           </div>
         );
       }
@@ -241,7 +241,7 @@ export function Dashboard() {
 
   const kpiData = [
     {
-      title: "Patients",
+      title: "Subjects",
       value: trialData.totalPatients.toString(),
       change: "↑12%",
       changeType: "increase" as const,
@@ -276,8 +276,8 @@ export function Dashboard() {
 
   const quickActions = [
     {
-      title: "Enroll Patient",
-      description: "Add new patient to trial",
+      title: "Enroll Subject",
+      description: "Add new subject to trial",
       icon: <UserPlus className="w-5 h-5" />,
       href: "/patients/new",
       color: "bg-accent"
@@ -298,7 +298,7 @@ export function Dashboard() {
     },
     {
       title: "View Schedule",
-      description: "Patient visit calendar",
+      description: "Subject visit calendar",
       icon: <Calendar className="w-5 h-5" />,
       href: "/visit-schedule",
       color: "bg-purple-600"

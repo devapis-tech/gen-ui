@@ -168,7 +168,7 @@ export default function AdverseEventsPage() {
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-white">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject ID</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adverse Event Term</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Onset Date</th>
@@ -189,7 +189,7 @@ export default function AdverseEventsPage() {
                             >
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <Link 
-                                        href={`/patients/${normalizePatientId(event.patientId)}`}
+                                        href={`/subjects/${normalizePatientId(event.patientId)}`}
                                         className="text-blue-600 underline hover:text-blue-800"
                                     >
                                         {normalizePatientId(event.patientId)}

@@ -114,12 +114,12 @@ export default function FormsPage() {
             <div className="mb-6">
                 <div className="flex items-center space-x-4">
                     <Users className="w-5 h-5 text-gray-500" />
-                    <label className="text-sm font-medium text-gray-700">Select Patient:</label>
+                    <label className="text-sm font-medium text-gray-700">Select Subject:</label>
                     <div className="w-80">
                         <PatientSelector
                             selectedPatient={selectedPatient}
                             onPatientSelect={handlePatientSelect}
-                            placeholder="Select patient to view their forms..."
+                            placeholder="Select Subject to view their forms..."
                         />
                     </div>
                 </div>

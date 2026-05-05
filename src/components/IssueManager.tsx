@@ -387,7 +387,7 @@ export function IssueManager() {
                         <div className="flex flex-wrap gap-2 mb-3">
                           {issue.linkedTo.patientId && (
                             <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                              Patient: {issue.linkedTo.patientId}
+                              Subject: {issue.linkedTo.patientId}
                             </span>
                           )}
                           {issue.linkedTo.formId && (
